@@ -4,11 +4,61 @@
   
     
     <entry>
+      <title>HTTP协议之与WEB服务器</title>
+      <link href="/2024/06/05/HTTP%E5%8D%8F%E8%AE%AE%E4%B9%8B%E4%B8%8EWEB%E6%9C%8D%E5%8A%A1%E5%99%A8/"/>
+      <url>/2024/06/05/HTTP%E5%8D%8F%E8%AE%AE%E4%B9%8B%E4%B8%8EWEB%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      <categories>
+          
+          <category> 网络协议 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> HTTP </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>HTTP协议之详情</title>
+      <link href="/2024/06/04/HTTP%E5%8D%8F%E8%AE%AE%E4%B9%8B%E8%AF%A6%E6%83%85/"/>
+      <url>/2024/06/04/HTTP%E5%8D%8F%E8%AE%AE%E4%B9%8B%E8%AF%A6%E6%83%85/</url>
+      
+        <content type="html"><![CDATA[<p>HTTP报文大致分为报文首部和报文主体两块。[ <strong>报文首部</strong>]服务器端或者客户端需要处理的请求或响应的内容及属性。[ <strong>CR+LF</strong>]空行，[ <strong>报文主体</strong>]应被发送的数据。<br><img src="/../images/%E6%8A%A5%E6%96%87%E7%BB%93%E6%9E%84.jpg"></p><h2 id="HTTP协议"><a href="#HTTP协议" class="headerlink" title="HTTP协议"></a>HTTP协议</h2><h3 id="提升传输效率"><a href="#提升传输效率" class="headerlink" title="提升传输效率"></a>提升传输效率</h3><p><strong>压缩传输的内容编码</strong>：如邮件添加附件（压缩附件）。常用的内容编码：gzip，compress(UNIX系统标准压缩)，deflate(zlib),identity(不进行编码)。<br><strong>分割发送的分块传输编码</strong>：chunked(Content-Length:null Transfer-Encoding:chunked) 把实体主体分块的功能。HTTP/1.1中存在一种称为传输编码的机制。HTTP/2 中已经不支持 chunked 这一格式了，因为其本身提供了更加高级的流机制来实现类似功能.</p><h3 id="发送多种数据的多部分对象集合"><a href="#发送多种数据的多部分对象集合" class="headerlink" title="发送多种数据的多部分对象集合"></a>发送多种数据的多部分对象集合</h3><p>HTTP协议中也采纳了多部分对象集合，发送一份报文主体内可以包含多种类型的实体。通常是在图片或者文本文件等上传时使用。<strong>multipart/form-date</strong>在web表单文件上传时使用。<strong>nultipart/byteranges</strong>状态码206，响应报文包含多个范围的内容时使用。</p><h3 id="范围请求"><a href="#范围请求" class="headerlink" title="范围请求"></a>范围请求</h3><p>解决网络中断，需要一种可恢复的机制。所谓恢复是指能从之前下载中断处回复下载。实现该功能需要指定下载的范围实体(<strong>范围请求</strong>)。使用范围请求时，会用到首部字段Range来指定资源的byte范围。<br><img src="/../images/%E8%8C%83%E5%9B%B4%E8%AF%B7%E6%B1%82.jpg"></p><h3 id="内容协商返回最合适的内容"><a href="#内容协商返回最合适的内容" class="headerlink" title="内容协商返回最合适的内容"></a>内容协商返回最合适的内容</h3><p>内容协商机制是指客户端和服务端就响应的资源内容进行交涉，然后提供给客户端最为合适的资源。聂荣协商会以响应资源的语言，字符集，编码方式等作为判断基准。<strong>服务器驱动协商</strong>，<strong>客户端驱动协商</strong>，<strong>透明协商</strong></p><h3 id="状态码"><a href="#状态码" class="headerlink" title="状态码"></a>状态码</h3><p>在响应报文内，随状态码一起返回的信息会因方法的不同而发生改变。</p><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">1XX -&gt; 信息性状态码 -&gt; 接收的请求正在处理</span><br><span class="line">2XX -&gt; 成功状态码 -&gt; 请求正常处理完毕</span><br><span class="line">    200 OK</span><br><span class="line">    204 No Content</span><br><span class="line">    206 Partial Content 范围请求你</span><br><span class="line">3XX -&gt; 重定向状态码 -&gt; 需要进行附加操作以完成请求</span><br><span class="line">    301 Moved Permanently 永久性重定向</span><br><span class="line">    302 Found 临时性重定向</span><br><span class="line">    303 See Other 该状态码表示由于请求对应的资源存在着另一个URI，应使用GET方法定向获取请求的资源</span><br><span class="line">    304 </span><br><span class="line">    307</span><br><span class="line">4XX -&gt; 客户端错误状态码 -&gt; 服务器无法处理请求</span><br><span class="line">    400 Bad Request 表示请求报文存在语法错误</span><br><span class="line">    401 Unauthorized 发送的请求需要有通过HTTP认证（BASIC认证，DIGEST认证）的认证信息</span><br><span class="line">    403 Forbidden 对请求资源的访问被服务器拒绝了</span><br><span class="line">    404 Not Found 服务器没有请求的资源</span><br><span class="line">5XX -&gt; 服务器错误状态码 -&gt; 服务器处理请求出错</span><br><span class="line">    500 服务器端在执行请求发生了错误</span><br><span class="line">    503 服务器暂时处于超负载或者正在停机维护 </span><br></pre></td></tr></tbody></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> 网络协议 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> HTTP </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>HTTP协议之基础</title>
       <link href="/2024/06/03/HTTP%E5%8D%8F%E8%AE%AE%E4%B9%8B%E5%9F%BA%E7%A1%80/"/>
       <url>/2024/06/03/HTTP%E5%8D%8F%E8%AE%AE%E4%B9%8B%E5%9F%BA%E7%A1%80/</url>
       
-        <content type="html"><![CDATA[<p>&nbsp;&nbsp;HTTP通常被译为超文本传输协议（超文本转移协议）。为了知识共享而规划Web，借助多文档之间互相关联形成的超文本（HyperText），连成可以互相参阅的www(万维网)。当在浏览器的地址栏输入URL之后，信息会被送往某处，然后从某处获得的回复，内容就会被显示在Web页面上。通过指定的地址获取（或上传）服务器资源（文件等信息）就是使用的HTTP协议。</p><h2 id="HTTP协议"><a href="#HTTP协议" class="headerlink" title="HTTP协议"></a>HTTP协议</h2><h3 id="1、网络基础"><a href="#1、网络基础" class="headerlink" title="1、网络基础"></a>1、网络基础</h3><p>&nbsp;&nbsp;TCP/IP协议族是各类互联网相关的各类协议族的总称。TCP/IP协议族最重要的就是分层：应用层，传输层，网络层，数据链路层。</p><p><strong>应用层</strong>：应用层决定了向用户提供应用服务时通信的活动。TCP/IP协议族内预存了各类通用的应用服务。比如HTTP协议,FTP(文件传输协议)，DNS(域名服务)。</p><p><strong>传输层</strong>：传输层对上层应用，提供处于网络连接中的两台计算机的网络传输。在传输层有两个性质不同的协议：TCP(传输控制协议)，UDP(用户数据报协议)。</p><p><strong>网络层</strong>：网络层是用来处理网络上流动的数据包。数据包是网络传输的最小数据单位，该层规定了通过怎样的路径，到达对应的计算机，并把数据包传送给对方。与对方计算机之间通过多台计算机或者网络设备进行传输时，网络层所起的作用就是在众多的选项中选择一条传输路线。</p><p><strong>链路层（网络接口层）</strong>：用来处理网络的硬件部分。包括控制操作系统，硬件的设备驱动，NIC(网络适配器：网卡)及光线等物理可见部分，硬件的范畴均在链路层的作用范围之内。</p><p><img src="/../images/%E9%80%9A%E4%BF%A1%E4%BC%A0%E8%BE%93%E6%B5%81.jpg" alt="TCP/IP通信传输流"></p><p><strong>负责传输的IP协议</strong>：IP地址指明了节点被分配的地址，MAC地址是指网卡所属的固定地址。IP地址可以和MAC地址进行配对，IP地址可更换，但MAC地址基本上不会改变。IP间的通信依赖MAC地址，在网络上，通常是经过多台计算机和网络设备中转才能连接到对方，在中转过程中会利用下一站的MAC地址来搜索下一个中转目标。会采用<strong>ARP协议</strong>，ARP协议是一种用来解析地址的协议。根据通信方的IP地址就可以查出对应的MAC地址。</p><p><strong>可靠的TCP协议</strong>：TCP位于传输层，提供可靠的字节流服务。字节流服务是指，为了方便传输，将大块数据分割成以报文段为单位的数据包进行管理。而可靠的传输服务是指，能够把数据准确可靠的传给对方。为了准确无误将数据送达目标，TCP协议采用了三次握手策略。<br><img src="/../images/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E7%AE%80.jpg" alt="三次握手（简）"></p><p><strong>域名解析DNS服务</strong>：和HTTP协议一样位于应用层的协议。它提供域名到IP地址之间的解析服务。<br><img src="/../images/%E4%B8%8EHTTP%E5%8D%8F%E8%AE%AE%E5%85%B3%E7%B3%BB%E5%9B%BE.jpg" alt="与HTTP关系图"></p><h3 id="2、简单的HTTP协议"><a href="#2、简单的HTTP协议" class="headerlink" title="2、简单的HTTP协议"></a>2、简单的HTTP协议</h3><p>HTTP协议和TCP/IP协议族内的其他众多的协议相同，用于客户端和服务器之间的通信。HTTP是一种不保存协议，即<strong>无状态协议</strong>。HTTP协议自身不对请求和响应之间的通信状态进行保存。HTTP/1.1虽然也是无状态协议，但是为了实现期望的保存状态功能，引入了Cookie技术。</p><p>HTTP/1.1方法 –&gt;<br>&nbsp;&nbsp;&nbsp; <strong>GET</strong>:获取资源<br>&nbsp;&nbsp;&nbsp; <strong>POST</strong> 传输实体主体<br>&nbsp;&nbsp;&nbsp; <strong>PUT</strong>：传输文件<br>&nbsp;&nbsp;&nbsp; <strong>HEAD</strong>：获得报文首部（不返回报文主体部分）<br>&nbsp;&nbsp;&nbsp; <strong>DELETE</strong>：删除文件<br>&nbsp;&nbsp;&nbsp; <strong>OPTIONS</strong>：询问支持的方法（如支持GET和HEAD方法）<img src="/../images/OPTIONS%E6%96%B9%E6%B3%95.jpg"><br>&nbsp;&nbsp;&nbsp; <strong>TRACE</strong>：追踪路径（不常用，容易引发SXST攻击）<br>&nbsp;&nbsp;&nbsp; <strong>CONNECT</strong>：要求用隧道协议连接代理，要求在代理服务器通信时建立隧道，实现隧道协议惊醒TCP通信。主要使用SSL(安全套阶层)和TLS(传输层安全)协议把通信内容加密后经过网络隧道传输。格式：CONNECT 代理服务器名:端口号 HTTP版本 。场景：HTTPS代理，防火墙和安全网关，VPN服务等</p><p>在HTTP/1.1中，所有的连接默认都是持久连接（长连接），在HTTP/1.0还没有标准化。持久化连接是的多数请求翼<strong>管线化</strong>(pipelining)方式发送层成为可能。从前发送请求后需要等待并收到响应，才能发送下一个请求。管线化技术出现后，不能等待响应可以直接发送下次请求。</p><p><strong>Cookie状态管理</strong>：Cookie会根据从服务器端发送的响应报文内的一个叫做Set-Cookie的首部信息，通知客户端保存Cookie。当客户端再次发送请求时，客户端会自动在请求报文中加入Cookie值后发送出去。<br><img src="/../images/Cookie%E4%BA%A4%E4%BA%92.jpg"></p>]]></content>
+        <content type="html"><![CDATA[<p>HTTP 是一种用作获取诸如 HTML 文档这类资源的协议。它是 Web 上进行任何数据交换的基础，同时，也是一种客户端—服务器（client-server）协议，也就是说，请求是由接受方——通常是浏览器——发起的。一个完整网页文档是由获取到的不同文档组件——像是文本、布局描述、图片、视频、脚本等——重新构建出来的。<br><img src="/../images/HTTP%E6%A6%82%E8%BF%B0.jpg" alt="HTTP协议之基础"></p><h2 id="HTTP协议"><a href="#HTTP协议" class="headerlink" title="HTTP协议"></a>HTTP协议</h2><h3 id="1、网络基础"><a href="#1、网络基础" class="headerlink" title="1、网络基础"></a>1、网络基础</h3><p>&nbsp;&nbsp;TCP/IP协议族是各类互联网相关的各类协议族的总称。TCP/IP协议族最重要的就是分层：应用层，传输层，网络层，数据链路层。</p><p><strong>应用层</strong>：应用层决定了向用户提供应用服务时通信的活动。TCP/IP协议族内预存了各类通用的应用服务。比如HTTP协议,FTP(文件传输协议)，DNS(域名服务)。</p><p><strong>传输层</strong>：传输层对上层应用，提供处于网络连接中的两台计算机的网络传输。在传输层有两个性质不同的协议：TCP(传输控制协议)，UDP(用户数据报协议)。</p><p><strong>网络层</strong>：网络层是用来处理网络上流动的数据包。数据包是网络传输的最小数据单位，该层规定了通过怎样的路径，到达对应的计算机，并把数据包传送给对方。与对方计算机之间通过多台计算机或者网络设备进行传输时，网络层所起的作用就是在众多的选项中选择一条传输路线。</p><p><strong>链路层（网络接口层）</strong>：用来处理网络的硬件部分。包括控制操作系统，硬件的设备驱动，NIC(网络适配器：网卡)及光线等物理可见部分，硬件的范畴均在链路层的作用范围之内。</p><p><img src="/../images/%E9%80%9A%E4%BF%A1%E4%BC%A0%E8%BE%93%E6%B5%81.jpg" alt="TCP/IP通信传输流"></p><p><strong>负责传输的IP协议</strong>：IP地址指明了节点被分配的地址，MAC地址是指网卡所属的固定地址。IP地址可以和MAC地址进行配对，IP地址可更换，但MAC地址基本上不会改变。IP间的通信依赖MAC地址，在网络上，通常是经过多台计算机和网络设备中转才能连接到对方，在中转过程中会利用下一站的MAC地址来搜索下一个中转目标。会采用<strong>ARP协议</strong>，ARP协议是一种用来解析地址的协议。根据通信方的IP地址就可以查出对应的MAC地址。</p><p><strong>可靠的TCP协议</strong>：TCP位于传输层，提供可靠的字节流服务。字节流服务是指，为了方便传输，将大块数据分割成以报文段为单位的数据包进行管理。而可靠的传输服务是指，能够把数据准确可靠的传给对方。为了准确无误将数据送达目标，TCP协议采用了三次握手策略。<br><img src="/../images/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E7%AE%80.jpg" alt="三次握手（简）"></p><p><strong>域名解析DNS服务</strong>：和HTTP协议一样位于应用层的协议。它提供域名到IP地址之间的解析服务。<br><img src="/../images/%E4%B8%8EHTTP%E5%8D%8F%E8%AE%AE%E5%85%B3%E7%B3%BB%E5%9B%BE.jpg" alt="与HTTP关系图"></p><h3 id="2、简单的HTTP协议"><a href="#2、简单的HTTP协议" class="headerlink" title="2、简单的HTTP协议"></a>2、简单的HTTP协议</h3><p>HTTP协议和TCP/IP协议族内的其他众多的协议相同，用于客户端和服务器之间的通信。HTTP是一种不保存协议，即<strong>无状态协议</strong>。HTTP协议自身不对请求和响应之间的通信状态进行保存。HTTP/1.1虽然也是无状态协议，但是为了实现期望的保存状态功能，引入了Cookie技术。</p><p>HTTP/1.1方法 –&gt;<br>&nbsp;&nbsp;&nbsp; <strong>GET</strong>:获取资源<br>&nbsp;&nbsp;&nbsp; <strong>POST</strong> 传输实体主体<br>&nbsp;&nbsp;&nbsp; <strong>PUT</strong>：传输文件<br>&nbsp;&nbsp;&nbsp; <strong>HEAD</strong>：获得报文首部（不返回报文主体部分）<br>&nbsp;&nbsp;&nbsp; <strong>DELETE</strong>：删除文件<br>&nbsp;&nbsp;&nbsp; <strong>OPTIONS</strong>：询问支持的方法（如支持GET和HEAD方法）<img src="/../images/OPTIONS%E6%96%B9%E6%B3%95.jpg"><br>&nbsp;&nbsp;&nbsp; <strong>TRACE</strong>：追踪路径（不常用，容易引发SXST攻击）<br>&nbsp;&nbsp;&nbsp; <strong>CONNECT</strong>：要求用隧道协议连接代理，要求在代理服务器通信时建立隧道，实现隧道协议惊醒TCP通信。主要使用SSL(安全套阶层)和TLS(传输层安全)协议把通信内容加密后经过网络隧道传输。格式：CONNECT 代理服务器名:端口号 HTTP版本 。场景：HTTPS代理，防火墙和安全网关，VPN服务等</p><p>在HTTP/1.1中，所有的连接默认都是持久连接（长连接），在HTTP/1.0还没有标准化。持久化连接是的多数请求翼<strong>管线化</strong>(pipelining)方式发送层成为可能。从前发送请求后需要等待并收到响应，才能发送下一个请求。管线化技术出现后，不能等待响应可以直接发送下次请求。</p><p><strong>Cookie状态管理</strong>：Cookie会根据从服务器端发送的响应报文内的一个叫做Set-Cookie的首部信息，通知客户端保存Cookie。当客户端再次发送请求时，客户端会自动在请求报文中加入Cookie值后发送出去。<br><img src="/../images/Cookie%E4%BA%A4%E4%BA%92.jpg"></p>]]></content>
       
       
       <categories>
@@ -33,7 +83,7 @@
       <link href="/2024/06/01/%E5%88%9D%E8%AF%86mysql/"/>
       <url>/2024/06/01/%E5%88%9D%E8%AF%86mysql/</url>
       
-        <content type="html"><![CDATA[<p>数据库（Database）是按照数据结构来组织、存储和管理数据的仓库。MySQL 是最流行的关系型数据库管理系统。</p><h2 id="启动myql"><a href="#启动myql" class="headerlink" title="启动myql"></a>启动myql</h2><h3 id="mysql服务程序"><a href="#mysql服务程序" class="headerlink" title="mysql服务程序"></a>mysql服务程序</h3><h3 id="mysql客户端程序"><a href="#mysql客户端程序" class="headerlink" title="mysql客户端程序"></a>mysql客户端程序</h3>]]></content>
+        <content type="html"><![CDATA[<h2 id="启动myql"><a href="#启动myql" class="headerlink" title="启动myql"></a>启动myql</h2><h3 id="mysql服务程序"><a href="#mysql服务程序" class="headerlink" title="mysql服务程序"></a>mysql服务程序</h3><h3 id="mysql客户端程序"><a href="#mysql客户端程序" class="headerlink" title="mysql客户端程序"></a>mysql客户端程序</h3>]]></content>
       
       
       <categories>

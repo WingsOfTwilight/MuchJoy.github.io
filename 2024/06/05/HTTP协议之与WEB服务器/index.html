@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="HTTP协议之与WEB服务器, 暮光之翼">
-    <meta name="description" content="HTTP是Web服务器与客户端之间通信的基础协议。Web服务器实现了HTTP协议的功能，能够理解和响应HTTP请求。">
+    <meta name="description" content="HTTP是Web服务器与客户端之间通信的基础协议。Web服务器能够理解和响应HTTP请求。">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -368,7 +368,61 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                
+                <h2 id="HTTP协议"><a href="#HTTP协议" class="headerlink" title="HTTP协议"></a>HTTP协议</h2><p> <strong>用单台虚拟主机实现多个域名</strong> 通过基于名称的虚拟主机配置，可以在同一个IP地址上托管多个域名。</p>
+<h3 id="通信转发程序"><a href="#通信转发程序" class="headerlink" title="通信转发程序"></a>通信转发程序</h3><p><strong>代理</strong> ：”中间人”角色，接收由客户端发送的请求并转发给服务器，同时也接受服务器返回的响应并转发给客户端。代理不会改变请求的URLI，会直接发送给前方持有资源的目标服务器。可做到针对特定URI访问的控制。<strong>缓存代理</strong>预存副本在缓存服务器上，<strong>透明代理</strong>不对报文做任何加工。反之为<strong>非透明代理</strong>。<br><img src="/../images/1717579873084.jpg"></p>
+<p><strong>网关</strong></p>
+<p>利用网关可以有HTTP请求转化为其他协议通信。利用网关能提高通信的安全性。可以在客户端与网关之间通信线路上加密以确保连接的安全性。</p>
+<p><strong>隧道</strong></p>
+<p>隧道的目的是确保客户端能与服务器进行安全的通信。隧道本身不会去解析HTTP请求。</p>
+<h3 id="资源缓存"><a href="#资源缓存" class="headerlink" title="资源缓存"></a>资源缓存</h3><p><strong>缓存的有效期</strong> 会确认有效性。</p>
+<p><strong>客户端缓存</strong> 临时网络文件。会确认有效性。</p>
+<h3 id="HTTP首部"><a href="#HTTP首部" class="headerlink" title="HTTP首部"></a>HTTP首部</h3><p><img src="/../images/1717586328959.jpg"></p>
+<p><strong>HTTP首部字段</strong> ：首部字段名:字段值。<strong>类型</strong>：通用首部字段，请求首部字段，响应首部字段，实体首部字段。首部指令是可选的，多个指令之间用“，”分隔。</p>
+<p><strong>通用首部字段</strong></p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Cache-Control       制缓存的行为</span><br><span class="line">Connection          跳首部、连接的管理</span><br><span class="line">Date                创建报文的日期时间</span><br><span class="line">Transfer-Encoding   指定报文主体的传输编码方式</span><br><span class="line">Upgrade             升级为其他协议</span><br><span class="line">Via                 代理服务器的相关信息</span><br><span class="line">Warning             错误通知</span><br></pre></td></tr></tbody></table></figure>
+
+<p><strong>请求首部字段</strong></p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Accept              用戶代理可处理的媒体类型</span><br><span class="line">Accept-Encoding     优先的内容编码</span><br><span class="line">Accept-Language     优先的语言(自然语言)</span><br><span class="line">Host                请求资源所在服务器</span><br><span class="line">Range               实体的字节范围请求</span><br><span class="line">User-Agent          HTTP客户端程序的信息</span><br><span class="line">Proxy-Authorization 代理服务器要求客户端的认证信息</span><br></pre></td></tr></tbody></table></figure>
+
+<p><strong>响应首部字段</strong></p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Accept-Ranges       是否接受宇节范围请求</span><br><span class="line">Age                 推算资源创建经过时间</span><br><span class="line">ETag                资源的匹配信息</span><br><span class="line">Location            令客户端重定向至指定URI</span><br><span class="line">Proxy-Authenticate  代理服务器对客户端的认证信息</span><br><span class="line">Retry-After         对再次发起请求的时机要求</span><br><span class="line">Server              HTTP服务器的安装信息</span><br><span class="line">Vary                代理服务器缓存的管理信息</span><br><span class="line">WWW-Authenticate    服务器对客户端的认证信息</span><br></pre></td></tr></tbody></table></figure>
+
+<p><strong>实体首部字段</strong> </p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Allow               资源可支持的HTTP 方法</span><br><span class="line">Content-Encoding    实体主体适用的编码方式 </span><br><span class="line">Content-Language    实体主体的自然语言 </span><br><span class="line">Content-Length      实体主体的大小 (单位:字节) </span><br><span class="line">Content-Location    替代对应资源的URI </span><br><span class="line">Content-MD5         实体主体的报文摘要</span><br><span class="line">Content-Range       实体主体的位置范围 </span><br><span class="line">Content-Type        实体主体的媒体类型 </span><br><span class="line">Expires             实体主体过期的日期时间</span><br><span class="line">Last-Modified       资源的最后修改日期时间</span><br></pre></td></tr></tbody></table></figure>
+
+<p><strong>Set-Cookie</strong>: 为Cookie服务的首部字段</p>
+<h3 id="确保Web安全的HTTPS"><a href="#确保Web安全的HTTPS" class="headerlink" title="确保Web安全的HTTPS"></a>确保Web安全的HTTPS</h3><p><strong>HTTP缺点</strong> 通信使用明文(不加密)，内容可能会被窃听；不验证通信方的身份， 因此有可能遭遇伪装；无法证明报文的完整性，所以有可能已遭篡改。</p>
+<p><strong>HTTPS</strong> HTTP协议中没有加密机制，但可以通过和SSL或者TLS的组合使用，加密HTTP的通信内容（<strong>通信加密</strong>）。</p>
+<p><strong>内容加密</strong> HTTP协议中没有加密机制，那么就对HTTP协议传输的内容本身加密。对报文主体加密。前提是要求客户端和服务端同时具备加密和解密机制。能有可能被篡改。</p>
+<p><strong>不验证通信方的身份就可能遭遇伪装</strong> ：任何人都可以发起请求。<br><strong>无法证明报文完整性，可能已被篡改</strong> ：接收到的内容可能有误<br><strong>如何防止篡改</strong> ：常用的方法是MD5 和SHA-1等散列值集校验以及用来确认文件的数字签名方法。因为PGP 和MD5 本身被改写的话，用户是没有办法意识到的。用这些方法也依然无法百分百保证确认结果正确。为了有效防止这些弊端， 有必要使用<strong>HTTPS</strong>。</p>
+<p><strong>HTTP+加密+认证+完整性保护 = HTTPS</strong> ： HTTPS是身披SSL外壳的HTTP，只是HTTP通信接口部分用SSL和TLS协议代替，通常HTTP直接和TCP通信，当使用SSL时则先和SSL通信，再有SSL和TCP通信。<br><img src="/../images/1717636990962.jpg"></p>
+<p>SSL采用公开密钥加密，密钥是保密的。<strong>共享密钥加密</strong> 加密和解密同用一个密钥。也称为对称密钥加密。发送密钥就有被窃听的风险，但不发送，对方就不能解密。再说，密 钥若能够安全发送，那数据也应该能安全送达。<strong>公开密钥加密</strong>很好解决了共享密钥加密的困难。公开密钥加密使用非对称的密钥，一吧叫做私有密钥，一把叫做公开密钥。使用密钥加密方式，发送密文的一方使用对方的公开密钥进行加密处理，对方收到被加密的信息后，再用私有密钥解密。这样既不需要发送私有密钥，也不必担心密钥被攻击盗走。HTTPS采用的<strong>混合加密</strong>：使用公开密钥加密 加密 共享密钥方式中的密钥，确保安全的情况下，使用共享密钥加密方式进行通信。</p>
+<h3 id="Session管理及Cookie应用"><a href="#Session管理及Cookie应用" class="headerlink" title="Session管理及Cookie应用"></a>Session管理及Cookie应用</h3><p>基于表单认证是通过服务器端的Web应用，将客户端发送来的用户Id和密码与之前登陆过的信息做匹配来进行认证。HTTP是无状态协议，于是会使用Coolie来管理Session，来弥补HTTP协议中不存在的状态管理功能。<br><img src="/../images/1717641701756.jpg"><br>1、客户端发送用户ID和密码等登录信息到服务器<br>2、服务器发放用以识别用户的SessionId，返回是会在首部字段Set-Cookie写入SessionId<br>3、客户端收到服务器端发来的Session ID后，将其作为Cookie保存在本地。下次发送请求时，浏览器或自动发送Cookie。</p>
+<p><strong>加盐</strong>：一种安全的保存密码方法，先利用给密码加盐的方式增加额外信息，在使用散列函数计算出散列值后保存。</p>
+<h3 id="HTTP瓶颈"><a href="#HTTP瓶颈" class="headerlink" title="HTTP瓶颈"></a>HTTP瓶颈</h3><p>使用HTTP协议探知服务器上是否有内容更新，就必须频繁的从客户端到服务端进行确认。（1、不管是否有更新都要吧数据全部响应一次。2、每次互相发送相同的首部。3、有时不压缩数据直接发送）。</p>
+<p><strong>Ajax</strong> 有效利用JavaScript和DOM的操作，以达到局部Web页面替换加载的异步通信手段。但是并没有解决HTTP协议本身的问题。</p>
+<h3 id="全双工通信的WebSocket"><a href="#全双工通信的WebSocket" class="headerlink" title="全双工通信的WebSocket"></a>全双工通信的WebSocket</h3><p>WebSocket，即Web浏览器与Web服务器之间全双工通信标准。</p>
+<p>一旦建立WebSocket协议的通信连接，之后所有的通信都依靠这个专用协议进行。通信过程中可以互次昂发送JSON，XML或图片等任意格式的数据。</p>
+<p><strong>WebSocket协议</strong> 主要特点：<br>推送功能：支持由服务器向客户端推送数据的推送功能。<br>减少通信量：只要建立起WebSocket 连接，就希望一直保持连接状态。位了实现WebScoket通信，在HTTP连接建立之后，需要完成一次握手的步骤。成功握手确立WebScoket连接之后，通信时不再使用HTTP的数据帧，而采用WebSocket独立的数据帧。<br><img src="/../images/1717665892946.jpg"></p>
+<h3 id="Web攻击技术"><a href="#Web攻击技术" class="headerlink" title="Web攻击技术"></a>Web攻击技术</h3><p>简单的HTTP协议本身并不存在安全性问题，因此协议本身几乎不会成为攻击的对象。应用HTTP协议的服务器和客户端，以及运行在服务器上的web应用等资源才是攻击目标。</p>
+<p><strong>在客户端即可篡改请求</strong></p>
+<p><strong>针对Web应用的攻击模式</strong><br>主动攻击：<br><img src="/../images/1717667317285.jpg"><br>被动攻击：具有代表性的攻击是跨站脚本攻击和跨站点请求伪造。<br><img src="/../images/1717667403282.jpg"></p>
+<p><strong>利用用户的身份攻击企业内部的网络</strong><br>利用被动攻击，可发起对原本从互联网上无法直接访问的企业内网等网络的攻击。</p>
+<p><strong>跨站脚本攻击</strong> 跨站脚本政击(Cross-SiteScripting，XSS)是指通过存在的安全漏洞的Web网站注册用户的浏览器内运行非法的HTML标签或JavaScript进行的一种攻击。XSS是攻击者利用预先设置的陷阱触发的被动攻击。</p>
+<p><strong>SQL注入攻击</strong></p>
+<p><strong>OS命令注入攻击</strong></p>
+<p><strong>HTTP首部注入攻击</strong></p>
+<p><strong>HTTP响应截断攻击</strong></p>
+<p><strong>邮件首部注入攻击</strong></p>
+<p><strong>远程文件包含漏洞</strong></p>
+<p><strong>开放重定向</strong> 是一种对指定的任意URL作重定向<br>跳转的功能。而于此功能相关联的安全漏洞是指，假如指定的重定向URL到某个具有恶意的Web网站，那么用户就会被诱导至那个Web网站。</p>
+<p><strong>会话劫持</strong> 会话劫持(Session Hiack )是指攻击者通过某种手段拿到了用户的<br>会话1D，并非法使用此会话1D 份装成用户，达到攻击的目的。</p>
+<p><strong>会话固定攻击</strong>对以窃取目标会话ID为主动攻击手段的会话劫持而言，会话固定攻击(Sesion Fixation )攻击会强制用户使用攻击者指定的会话ID，属于被动攻击。</p>
+<p><strong>跨站点请求伪造</strong> 可能造成的问题：<br>• 利用己通过认证的用户权限更新设定信息等<br>• 利用己通过认证的用户权限购买商品<br>• 利用己通过认证的用户权限在留言板上发表言论</p>
+<p><strong>点击劫持</strong><br>点击劫持是指利用透明的按钮或链接做成陷阱，覆盖在web页面之上。然后诱使用户在不知情的情况下，点击那个链接访问内容的一种攻击手段。这种行为又称为界面伪装。</p>
+<p><strong>DOS攻击</strong> DOS攻击是一种让运行中的服务呈停止状态的攻击。</p>
+<p><strong>后门程序</strong> 后门程序(Backdoor )是指开发设置的隐藏入口，可不按正常步骤使用受限功能。可通过监视进程和通信的状态发现被植人的后门程序。但设定在 web 应用中的后门程序，由于和正常使用时区别不大，通常很难发现。</p>
+
                 
             </div>
             <hr/>
@@ -528,7 +582,7 @@
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            HTTP是Web服务器与客户端之间通信的基础协议。Web服务器实现了HTTP协议的功能，能够理解和响应HTTP请求。
+                            HTTP是Web服务器与客户端之间通信的基础协议。Web服务器能够理解和响应HTTP请求。
                         
                     </div>
                     <div class="publish-info">

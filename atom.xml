@@ -93,15 +93,15 @@
     <link href="https://wingsoftwilight.github.io/2024/06/01/mysql%E8%AF%A6%E8%A7%A3(%E4%B8%80)/"/>
     <id>https://wingsoftwilight.github.io/2024/06/01/mysql%E8%AF%A6%E8%A7%A3(%E4%B8%80)/</id>
     <published>2024-06-01T14:41:31.000Z</published>
-    <updated>2024-06-07T02:11:26.933Z</updated>
+    <updated>2024-06-09T11:21:14.626Z</updated>
     
-    <content type="html"><![CDATA[<p>服务器程序在处理来自客户端的查询请求时，大致需要分为3部分：连接管理，解析与优化，存储引擎。<br><img src="/../images/1717725217845.jpg"></p>]]></content>
+    <content type="html"><![CDATA[<p>服务器程序在处理来自客户端的查询请求时，大致需要分为3部分：连接管理，解析与优化，存储引擎。<br><img src="/../images/1717725217845.jpg"></p><h2 id="InnoDB记录存储结构"><a href="#InnoDB记录存储结构" class="headerlink" title="InnoDB记录存储结构"></a>InnoDB记录存储结构</h2><p><strong>InnoDB行</strong> : InnoDB存储引擎有4种不同类型的行格式。分别是COMPACT，REDUNDANT，DYNAMIC，COMPRESSED。</p><h3 id="InnoDB-COMPACT行格式"><a href="#InnoDB-COMPACT行格式" class="headerlink" title="InnoDB-COMPACT行格式"></a>InnoDB-COMPACT行格式</h3><p><img src="/../images/COMPACT%E8%A1%8C%E6%A0%BC%E5%BC%8F.png"></p><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">create table record_format_demo(</span><br><span class="line">    c1 varchar(10),</span><br><span class="line">    c2 varchar(10) not null,</span><br><span class="line">    c3 char(10),</span><br><span class="line">    c4 varchar(10)</span><br><span class="line">) charset=ascii row_format = compact;</span><br><span class="line"></span><br><span class="line">insert into record_format_demo (c1,c2,c3,c4)values('aaaa','bbb','cc','d'),('eeee','fff',NULL,NULL);</span><br></pre></td></tr></tbody></table></figure><p><strong>1、变长字段长度列表</strong><br>分为2部分：1、真正的数据内容；2、该数据占用的字节数。变长字段字节是按照逆序排列。</p><blockquote><p>★并不是所有记录都有这个变长字段长度列表部分，如果表中所有的列都不是变长数据类型或者所有的值都是NULL的话，就不需要变长字段长度列表。<br>★引入W字节来表示一个字符，utf8mb4字符集种W=4，utf8字符集中W=3,gbk字符集中W=2；引入M表示字符；引入L表示实际存储的字节数；对于VARCHAR(M)来说，最多占用字节数就是M * W。<br>★<strong>长度前缀</strong>使用1个字节表示，还是用2个字节表示。规则如下：</p><blockquote><p>如果M * W &lt;= 255,那么使用一个字节的长度前缀。<br>如果M * W &gt;= 255,则又分2种情况：1、如果L &lt;= 127 则用1个字节的长度前缀；2、如果 L &gt; 127 ,则用2个字节的长度前缀。</p></blockquote></blockquote><p><img src="/../images/%E5%8F%98%E9%95%BF%E5%AD%97%E6%AE%B5%E9%95%BF%E5%BA%A6%E5%88%97%E8%A1%A8.png"></p><p><strong>2、NULL值列表</strong></p><h3 id="InnoDB-REDUNDANT行格式"><a href="#InnoDB-REDUNDANT行格式" class="headerlink" title="InnoDB-REDUNDANT行格式"></a>InnoDB-REDUNDANT行格式</h3>]]></content>
     
     
       
       
     <summary type="html">&lt;p&gt;服务器程序在处理来自客户端的查询请求时，大致需要分为3部分：连接管理，解析与优化，存储引擎。&lt;br&gt;&lt;img src=&quot;/../images/1717725217845.jpg&quot;&gt;&lt;/p&gt;
-</summary>
+&lt;h2 id=&quot;InnoDB记录存储结构&quot;&gt;&lt;a href=&quot;#InnoDB记录存储</summary>
       
     
     

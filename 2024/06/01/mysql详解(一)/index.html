@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="初识mysql, 生活多笑声">
+    <meta name="keywords" content="mysql详解(一), 生活多笑声">
     <meta name="description" content="数据库（Database）是按照数据结构来组织、存储和管理数据的仓库。">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -17,7 +17,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>初识mysql | 生活多笑声</title>
+    <title>mysql详解(一) | 生活多笑声</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -298,7 +298,7 @@
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">初识mysql</h1>
+                    <h1 class="description center-align post-title">mysql详解(一)</h1>
                 </div>
             </div>
         </div>
@@ -391,7 +391,13 @@
 <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">预留位1                  1位             没有使用    </span><br><span class="line">预留位2                  1位             没有使用    </span><br><span class="line">deleted_flag            1位             标记是否被删除</span><br><span class="line">min_rec_flag            1位             最小记录标记，通常用来标记页面中的最小记录(索引优化，快速定位最小记录)</span><br><span class="line">n_owned                 4位             用于表示当前记录拥有记录槽(solt)的数量，这些槽可以用来存储实际的记录数据</span><br><span class="line">                                            也可以用来管理页中自由空间：管理记录链表，优化页面存储</span><br><span class="line">heap_no                 13位            标识记录在页中的位置，它是记录在数据页中的唯一标识符，可以帮助快速定</span><br><span class="line">                                            位特定记录； 来管理和组织页中的记录。它在记录的插入、更新和删除操作中起到关键作用；  有助于页内记录的排序和管理。</span><br><span class="line">record_type             3位             区分记录类型： 0 (ORDINARY_RECORD)：普通记录，表示实际的用户数据记录</span><br><span class="line">                                                    1 (NODE_POINTER)：节点指针，表示B+树中指向子节点的指针记录。</span><br><span class="line">                                                    2 (INFIMUM)：页的最小记录（infimum record），用于页的边界管理。</span><br><span class="line">                                                    3 (SUPREMUM)：页的最大记录（supremum record），用于页的边界管理。</span><br><span class="line">next_record             16位            用于指向下一条记录(表示下一条记录的相对位置)；用途：顺序扫描；范围查询；</span><br><span class="line">                                            插入和删除操作</span><br></pre></td></tr></tbody></table></figure>
 
 <p><img src="/../images/COMPACT%E8%AF%A6%E7%BB%86.png"></p>
-<h3 id="InnoDB-REDUNDANT行格式"><a href="#InnoDB-REDUNDANT行格式" class="headerlink" title="InnoDB-REDUNDANT行格式"></a>InnoDB-REDUNDANT行格式</h3>
+<p><strong>4、记录的真实数据</strong></p>
+<p>mysql会为每个记录默认添加一些列（隐藏列）DB_ROW_ID,DB_TRX_ID,DB_ROLL_PTR。<br>InnoDB主键生成策略：  1、优先使用自定义主键；2、其次不允许为空的UNQUE（唯一）键作为主键；3、最后默认添加row_id的隐藏列作为主键</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">列名            是否必需        占用字节            描述</span><br><span class="line">row_id          否              6字节           行ID，唯一标识</span><br><span class="line">trx_id          是              6字节           事务ID</span><br><span class="line">roll_pointer    是              7字节           回滚指针</span><br></pre></td></tr></tbody></table></figure>
+<p>CHAR(M)类型是定长，不属于变长字段，不会记录到变长字段长度列表中。</p>
+<h3 id="InnoDB-REDUNDANT行格式"><a href="#InnoDB-REDUNDANT行格式" class="headerlink" title="InnoDB-REDUNDANT行格式"></a>InnoDB-REDUNDANT行格式</h3><p>REDUNDANT行格式是mysql5.0之前就在使用的一种行格式。<br><img src="/../images/REDUNDANT%E8%A1%8C%E6%A0%BC%E5%BC%8F.png"></p>
+<p><strong>1、字段长度偏移列表</strong></p>
+
                 
             </div>
             <hr/>
@@ -590,9 +596,9 @@
                 <a href="/2024/06/01/mysql%E8%AF%A6%E8%A7%A3(%E4%B8%80)/">
                     <div class="card-image">
                         
-                        <img src="/../images/1717725217845.jpg" class="responsive-img" alt="初识mysql">
+                        <img src="/../images/1717725217845.jpg" class="responsive-img" alt="mysql详解(一)">
                         
-                        <span class="card-title">初识mysql</span>
+                        <span class="card-title">mysql详解(一)</span>
                     </div>
                 </a>
                 <div class="card-content article-content">

@@ -397,7 +397,16 @@
 <p>CHAR(M)类型是定长，不属于变长字段，不会记录到变长字段长度列表中。</p>
 <h3 id="InnoDB-REDUNDANT行格式"><a href="#InnoDB-REDUNDANT行格式" class="headerlink" title="InnoDB-REDUNDANT行格式"></a>InnoDB-REDUNDANT行格式</h3><p>REDUNDANT行格式是mysql5.0之前就在使用的一种行格式。<br><img src="/../images/REDUNDANT%E8%A1%8C%E6%A0%BC%E5%BC%8F.png"></p>
 <p><strong>1、字段长度偏移列表</strong></p>
-
+<p>REDUDANT行格式会把记录中<strong>所有的</strong>列的长度信息都按照逆序存储到字段长度偏移列表中。而且采用两个相邻偏移量的差值来计算各个列的长度。<br>也是逆序排列</p>
+<p>与COMPACT行格式相比，REDUNDANT行格式多了n_field和1byte_offs_flag这两个属性；没有record_type这个属性。</p>
+<p>REDUNDANT行格式没有NULL值列表：在字段长度偏移列表中对各列对应的偏移量做了特殊处理—将对应的偏移量值的第一位作为是否为NULL的依据，也称为NULL值比特位。如果该值为1，该列就为NULL。</p>
+<p>如果存储的NULL值字段是定长字段，则NULL值也将占用记录的真实数据部分；如果存储的NULL值字段是变长数据类型，则不在记录的真实数据部分占用任何存储空间。</p>
+<h3 id="溢出列"><a href="#溢出列" class="headerlink" title="溢出列"></a>溢出列</h3><p>InnoDB中磁盘和内存交互的基本单位是页。也就是说InnoDB是以页为基本单位来管理存储空间的。一个页的大小一般是16kb。在COMPACT和REDUNDANT行格式中，对于占用存储空间非常多的列。在记录真实数据处只会存储该列的一部分数据，而把<strong>剩余的数据分散存储到几个其他的页</strong>中。然后在记录真实数据处用20字节存储指向这些页的<strong>地址</strong>（还有存粗在其他页数据的<strong>字节数</strong>）。</p>
+<p><img src="/../images/%E6%BA%A2%E5%87%BA%E9%A1%B5.png"></p>
+<p><strong>一个列存储多少字节之后会变成溢出列呢？</strong> 一个页默认16kb也就是16384字节，mysql中规定一个页中至少存放2行数据。<br>1、除了存放记录外，还需要存储一些额外的信息。共132字节空间。<br>2、每个记录需要额外信息是27个字节：2字节存储真实数据长度；1字节存储NULL值；5个字节存储头信息；6个字节的Row_id列；6字节的trx_id列；7字节的roll_pointer列。假设一个列的真实数据占用的字节数为n：如果该列不发生溢出现象，就需要满足不等式：132+2*(27+n)&lt;16384。</p>
+<p><strong>mysql版本5.7之后，默认使用DYNAMIC行格式</strong> ，DYNAMIC行格式和COMPRESSED行格式与COMPACT类似：但是处理<strong>溢出列不同</strong>：DYNAMIC行格式不会存储真实数据，而是把所有的真实数据都存储到溢出页中。只记录真实数据处存储20字节大小的指向溢出页的地址。COMPRESSED行格式会采用压缩算法对页面进行压缩。以节省空间。</p>
+<p><strong>REDUNDANT是一种比较原始的韩格式，非紧凑型。而DYNAMIC，COMPACT，COMPRESSED 是较新的行格式，紧凑型(占用存储空间更少)</strong></p>
+<h2 id="InnoDB数据页结构"><a href="#InnoDB数据页结构" class="headerlink" title="InnoDB数据页结构"></a>InnoDB数据页结构</h2>
                 
             </div>
             <hr/>

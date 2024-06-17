@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="mysql详解(一), 生活多笑声">
+    <meta name="keywords" content="Mysql详解(一), 生活多笑声">
     <meta name="description" content="数据库（Database）是按照数据结构来组织、存储和管理数据的仓库。">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -17,7 +17,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>mysql详解(一) | 生活多笑声</title>
+    <title>Mysql详解(一) | 生活多笑声</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -52,9 +52,9 @@
 
     <script src="/libs/jquery/jquery-3.6.0.min.js"></script>
 
-<meta name="generator" content="Hexo 7.2.0">
+<meta name="generator" content="Hexo 7.2.0"><link rel="alternate" href="/atom.xml" title="生活多笑声" type="application/atom+xml">
+
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
-<link rel="alternate" href="/atom.xml" title="生活多笑声" type="application/atom+xml">
 </head>
 
 
@@ -298,7 +298,7 @@
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">mysql详解(一)</h1>
+                    <h1 class="description center-align post-title">Mysql详解(一)</h1>
                 </div>
             </div>
         </div>
@@ -406,7 +406,8 @@
 <p><strong>一个列存储多少字节之后会变成溢出列呢？</strong> 一个页默认16kb也就是16384字节，mysql中规定一个页中至少存放2行数据。<br>1、除了存放记录外，还需要存储一些额外的信息。共132字节空间。<br>2、每个记录需要额外信息是27个字节：2字节存储真实数据长度；1字节存储NULL值；5个字节存储头信息；6个字节的Row_id列；6字节的trx_id列；7字节的roll_pointer列。假设一个列的真实数据占用的字节数为n：如果该列不发生溢出现象，就需要满足不等式：132+2*(27+n)&lt;16384。</p>
 <p><strong>mysql版本5.7之后，默认使用DYNAMIC行格式</strong> ，DYNAMIC行格式和COMPRESSED行格式与COMPACT类似：但是处理<strong>溢出列不同</strong>：DYNAMIC行格式不会存储真实数据，而是把所有的真实数据都存储到溢出页中。只记录真实数据处存储20字节大小的指向溢出页的地址。COMPRESSED行格式会采用压缩算法对页面进行压缩。以节省空间。</p>
 <p><strong>REDUNDANT是一种比较原始的韩格式，非紧凑型。而DYNAMIC，COMPACT，COMPRESSED 是较新的行格式，紧凑型(占用存储空间更少)</strong></p>
-<h2 id="InnoDB数据页结构"><a href="#InnoDB数据页结构" class="headerlink" title="InnoDB数据页结构"></a>InnoDB数据页结构</h2>
+<h2 id="InnoDB数据页结构"><a href="#InnoDB数据页结构" class="headerlink" title="InnoDB数据页结构"></a>InnoDB数据页结构</h2><p><img src="/../images/%E6%95%B0%E6%8D%AE%E9%A1%B5%E7%BB%93%E6%9E%84.png"></p>
+
                 
             </div>
             <hr/>
@@ -432,7 +433,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://wingsoftwilight.github.io/2024/06/01/mysql%E8%AF%A6%E8%A7%A3(%E4%B8%80)/">https://wingsoftwilight.github.io/2024/06/01/mysql%E8%AF%A6%E8%A7%A3(%E4%B8%80)/</a>
+                    <a href="https://wingsoftwilight.github.io/2024/06/01/Mysql%E8%AF%A6%E8%A7%A3(%E4%B8%80)/">https://wingsoftwilight.github.io/2024/06/01/Mysql%E8%AF%A6%E8%A7%A3(%E4%B8%80)/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -602,12 +603,12 @@
                 本篇&nbsp;<i class="far fa-dot-circle"></i>
             </div>
             <div class="card">
-                <a href="/2024/06/01/mysql%E8%AF%A6%E8%A7%A3(%E4%B8%80)/">
+                <a href="/2024/06/01/Mysql%E8%AF%A6%E8%A7%A3(%E4%B8%80)/">
                     <div class="card-image">
                         
-                        <img src="/../images/1717725217845.jpg" class="responsive-img" alt="mysql详解(一)">
+                        <img src="/../images/1717725217845.jpg" class="responsive-img" alt="Mysql详解(一)">
                         
-                        <span class="card-title">mysql详解(一)</span>
+                        <span class="card-title">Mysql详解(一)</span>
                     </div>
                 </a>
                 <div class="card-content article-content">

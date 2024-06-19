@@ -407,6 +407,8 @@
 <p><strong>mysql版本5.7之后，默认使用DYNAMIC行格式</strong> ，DYNAMIC行格式和COMPRESSED行格式与COMPACT类似：但是处理<strong>溢出列不同</strong>：DYNAMIC行格式不会存储真实数据，而是把所有的真实数据都存储到溢出页中。只记录真实数据处存储20字节大小的指向溢出页的地址。COMPRESSED行格式会采用压缩算法对页面进行压缩。以节省空间。</p>
 <p><strong>REDUNDANT是一种比较原始的韩格式，非紧凑型。而DYNAMIC，COMPACT，COMPRESSED 是较新的行格式，紧凑型(占用存储空间更少)</strong></p>
 <h2 id="InnoDB数据页结构"><a href="#InnoDB数据页结构" class="headerlink" title="InnoDB数据页结构"></a>InnoDB数据页结构</h2><p><img src="/../images/%E6%95%B0%E6%8D%AE%E9%A1%B5%E7%BB%93%E6%9E%84.png"></p>
+<h3 id="记录存储"><a href="#记录存储" class="headerlink" title="记录存储"></a>记录存储</h3><p>第二条记录被标记为删除，将被删除的记录加入到垃圾链表中是2个阶段。多条被删除的记录next_record会形成垃圾链表。<br>Infimum记录和Supremum记录没有主键，Infimum记录是页面中最小的记录，Supremum记录是页面中最大的记录。<br>堆中的Heap_no值被分配之后就不会再改变，即使删除了某条记录也不会变。<br>next_record属性，箭头总是指向下一条记录的头记录和真实数据中间位置（<strong>紫色箭头</strong>），因为记录头逆序排列，向左读区是记录头信息，向右读区是真实数据。变长字段长度列表，null列表都是逆序排列，记录中靠前的字段和对应的字段信息在内存中更近，提高缓存命中率。<br>被删除的记录不会再被上一条记录指向（<strong>红色箭头</strong>）</p>
+<p><img src="/../images/%E6%95%B0%E6%8D%AE%E9%A1%B5%E2%80%94%E8%AE%B0%E5%BD%95%E5%A4%B4%E4%BF%A1%E6%81%AF.png"></p>
 
                 
             </div>

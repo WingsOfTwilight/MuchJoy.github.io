@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="mybatis详解(一), 生活多笑声">
+    <meta name="keywords" content="基于Springboot - Mybatis详解(一), 生活多笑声">
     <meta name="description" content="MyBatis是一个优秀的持久层框架，它支持自定义 SQL、存储过程以及高级映射。">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -17,7 +17,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>mybatis详解(一) | 生活多笑声</title>
+    <title>基于Springboot - Mybatis详解(一) | 生活多笑声</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -298,7 +298,7 @@
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">mybatis详解(一)</h1>
+                    <h1 class="description center-align post-title">基于Springboot - Mybatis详解(一)</h1>
                 </div>
             </div>
         </div>
@@ -372,6 +372,11 @@
 <blockquote>
 <p>SqlSessionFactory:是MyBatis 的核心对象之一，负责创建SqlSession实例。SqlSession实例是MyBatis与数据库交互的主要接口。<br>SqlSessionFactoryBean:在Spring中，通常使用SqlSessionFactoryBean来创建SqlSessionFactory实例。<br>SqlSessionTemplate:是 MyBatis-Spring提供的一个线程安全的SqlSession实现，它包装了MyBatis的SqlSession，并处理了事务管理、异常转换等功能。它是Spring与MyBatis集成的关键组件之一，常用来替代直接使用SqlSession。<br><strong>执行流程</strong> =&gt; Spring配置加载,初始化SqlSessionFactoryBean，创建SqlSessionFactory =&gt; 根据配置创建SqlSessionTemplate =&gt;执行Mapper方法(代理) =&gt; 获取 SqlSession =&gt; 事务管理</p>
 </blockquote>
+<p><strong>前置内容</strong> : mybatis-spring-boot-starter提供了自动配置类‘MybatisAutoConfiguration’，它会自动读取Springboot配置文件，并配置mybatis</p>
+<blockquote>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@Configuration</span><br><span class="line">@ConditionalOnClass({ SqlSessionFactory.class, SqlSessionFactoryBean.class })</span><br><span class="line">@ConditionalOnSingleCandidate(DataSource.class)</span><br><span class="line">@EnableConfigurationProperties(MybatisProperties.class)</span><br><span class="line">@AutoConfigureAfter({ DataSourceAutoConfiguration.class, MybatisLanguageDriverAutoConfiguration.class })</span><br><span class="line">public class MybatisAutoConfiguration {</span><br><span class="line">   // MyBatis相关的自动配置</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>MybatisProperties类绑定application.yml或者application.properties中的配置项<br>DataSourceAutoConfiguration类负责配置数据源，springboot会自动根据spring.dataSource前缀下来创建和配置DataSource。<br>MybatisProperties类和DataSourceAutoConfiguration等自动配置类会使这些配置数据来创建和配置mybatis所需的SqlSessionFactory,SqlSessionTemplate,DataSource等Bean。</p>
+</blockquote>
 
                 
             </div>
@@ -398,7 +403,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://wingsoftwilight.github.io/2024/06/17/Mybatis%E8%AF%A6%E8%A7%A3-%E4%B8%80/">https://wingsoftwilight.github.io/2024/06/17/Mybatis%E8%AF%A6%E8%A7%A3-%E4%B8%80/</a>
+                    <a href="https://wingsoftwilight.github.io/2024/06/17/Mybatis%E8%AF%A6%E8%A7%A3(%E4%B8%80)/">https://wingsoftwilight.github.io/2024/06/17/Mybatis%E8%AF%A6%E8%A7%A3(%E4%B8%80)/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -521,12 +526,12 @@
                 <i class="far fa-dot-circle"></i>&nbsp;本篇
             </div>
             <div class="card">
-                <a href="/2024/06/17/Mybatis%E8%AF%A6%E8%A7%A3-%E4%B8%80/">
+                <a href="/2024/06/17/Mybatis%E8%AF%A6%E8%A7%A3(%E4%B8%80)/">
                     <div class="card-image">
                         
-                        <img src="/../images/Mybatis%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.png" class="responsive-img" alt="mybatis详解(一)">
+                        <img src="/../images/Mybatis%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.png" class="responsive-img" alt="基于Springboot - Mybatis详解(一)">
                         
-                        <span class="card-title">mybatis详解(一)</span>
+                        <span class="card-title">基于Springboot - Mybatis详解(一)</span>
                     </div>
                 </a>
                 <div class="card-content article-content">

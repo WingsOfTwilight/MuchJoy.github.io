@@ -52,9 +52,9 @@
 
     <script src="/libs/jquery/jquery-3.6.0.min.js"></script>
 
-<meta name="generator" content="Hexo 7.2.0"><link rel="alternate" href="/atom.xml" title="生活多笑声" type="application/atom+xml">
-
+<meta name="generator" content="Hexo 7.2.0">
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+<link rel="alternate" href="/atom.xml" title="生活多笑声" type="application/atom+xml">
 </head>
 
 
@@ -409,6 +409,22 @@
 <h2 id="InnoDB数据页结构"><a href="#InnoDB数据页结构" class="headerlink" title="InnoDB数据页结构"></a>InnoDB数据页结构</h2><p><img src="/../images/%E6%95%B0%E6%8D%AE%E9%A1%B5%E7%BB%93%E6%9E%84.png"></p>
 <h3 id="记录存储"><a href="#记录存储" class="headerlink" title="记录存储"></a>记录存储</h3><p>第二条记录被标记为删除，将被删除的记录加入到垃圾链表中是2个阶段。多条被删除的记录next_record会形成垃圾链表。<br>Infimum记录和Supremum记录没有主键，Infimum记录是页面中最小的记录，Supremum记录是页面中最大的记录。<br>堆中的Heap_no值被分配之后就不会再改变，即使删除了某条记录也不会变。<br>next_record属性，箭头总是指向下一条记录的头记录和真实数据中间位置（<strong>紫色箭头</strong>），因为记录头逆序排列，向左读区是记录头信息，向右读区是真实数据。变长字段长度列表，null列表都是逆序排列，记录中靠前的字段和对应的字段信息在内存中更近，提高缓存命中率。<br>被删除的记录不会再被上一条记录指向（<strong>红色箭头</strong>）</p>
 <p><img src="/../images/%E6%95%B0%E6%8D%AE%E9%A1%B5%E2%80%94%E8%AE%B0%E5%BD%95%E5%A4%B4%E4%BF%A1%E6%81%AF.png"></p>
+<h3 id="页目录"><a href="#页目录" class="headerlink" title="页目录"></a>页目录</h3><p>将所有的记录(除去已经移除到垃圾链表的记录)划分为组，将每组中最后一条记录在页面只能够的地址偏移量（该记录真实数据与页面第0个字节之间的距离）单独提取出来（带头大哥属性n_owned为该组中记录数量），按照顺序存储到靠近尾部的地方。这个就是Page Directory（页目录）。页中这些地址偏移量称为槽（Slot），每个槽占用2个字节，页目录就是由多个槽组成的。</p>
+<p>每个分组中记录条数<strong>规定</strong>：Infimum记录所在的分组只能有一条记录。Supremum记录所在的分组拥有的记录条数只能在1～8条之间。其他的分组中记录的条数范围只能在4～8条之间。</p>
+<blockquote>
+<p>1、初始情况，一个页只有Infimum和Supremum记录，也就是2个分组。<br>2、每插入一条记录。都会从页目录中找到对应记录的主键值比待插入记录主键值大并且差值最小的槽。然后把对应槽的n_owned加1.直到改组中记录数等于8.<br>3、当一个组中的数据等于8之后，再插入记录，会将组中的记录拆分成2个组。拆分过程中新增一个槽。</p>
+</blockquote>
+<h3 id="页面头部"><a href="#页面头部" class="headerlink" title="页面头部"></a>页面头部</h3><p>Page Header 占用固定56个字节，专门存储各种状态信息。比如数据也中存了多少记录，Free Space字页面中的地址偏移量，也目录中存储了多少槽等。</p>
+<blockquote>
+<p>PAGE_N_DIR_SLOTS       2字节       在页目录中的槽数量<br>PAGE_HEAP_TOP           2字节       还未使用的空间最小地址，从改地址之后就是Free Space<br>PAGE_N_HEAP             2字节       第一位表示是否为紧凑型，后15位表示本页中的堆中记录的数量<br>PAGE_FREE               2字节       各个已删除的记录通过next_record组成一个单向链表，这个单向链表中记录的所占用的存储空间可<br>                                        以被重新利用。PAGE_FREEbao表示该链表头节点对应记录在页面中的偏移量。<br>PAGE_GARBAGE            2字节       已删除记录占用的字节数<br>PAGE_LAST_INSERT        2字节       最后插入记录的位置<br>PAGE_DIRECTION          2字节       记录插入的方向<br>PAGE_N_DIRECTION        2字节       一个方向连续插入的记录数量<br>PAGE_N_RECS             2字节       该也中用户记录的数量<br>PAGE_MAX_TRX_ID         2字节       修改当前页面的最大事物ID，仅存在二级索引页面中定义<br>PAGE_LEVEL              2字节       当前页在B+数中所处的层级<br>PAGE_INDEX_ID           8字节       索引ID，表示当前页属于那个索引<br>PAGE_BTR_SRE_LEAF       10字节      B+数也字节点段的头部信息，仅在B+数的根页面中定义<br>PAGE_BTR_SEG_TOP        2字节       B+数非叶字节点段的头部信息，仅存在B+数的根页面中定义</p>
+</blockquote>
+<h3 id="文件头部"><a href="#文件头部" class="headerlink" title="文件头部"></a>文件头部</h3><p><strong>File Header</strong>部分占用固定38字节，描述一些通用于各种页的信息，不如页扽编号，上一个页和下一个页面等等。</p>
+<p><strong>各种页面的类型</strong>：</p>
+<blockquote>
+<p>FILE_PAGE_TYPE_ALLOCATED           最新分配，还未使用<br>FIL_PAGE_UNDO_LOG                   undo日志页<br>FIL_PAGE_INODE                      存储段的信息<br>FIL_PAGE_IBUG_FREE_LIST             Change Buffer空闲列表<br>FIL_PAGE_IBUF_BITMAP                Change Buffer的一些属性<br>FIL_PAGE_TYPE_SYS                   存储一些系统数据<br>FIL_PAGE_TYPE_TRX_SYS               事务系统数据<br>FIL_PAGE_TYPE_FSP_HDR               表空间头部信息<br>FIL_PAGE_TYPE_FSP_HDR               存储区的一些属性<br>FIL_PAGE_TYPE_BLOB                  溢出页<br>FIL_PAGE_INDEX                      索引页（数据页）</p>
+</blockquote>
+<p><strong>存储记录的数据页面是可以组成一个双向链表</strong></p>
+<h3 id="文件尾部"><a href="#文件尾部" class="headerlink" title="文件尾部"></a>文件尾部</h3><p>File Trailer由8个字节组成。用于校验页是否完整。</p>
 
                 
             </div>

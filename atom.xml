@@ -3,11 +3,11 @@
   <title>欢乐多</title>
   
   <subtitle>积跬步,至千里</subtitle>
-  <link href="https://wingsoftwilight.github.io/atom.xml" rel="self"/>
+  <link href="https://muchjoy.github.io/atom.xml" rel="self"/>
   
-  <link href="https://wingsoftwilight.github.io/"/>
+  <link href="https://muchjoy.github.io/"/>
   <updated>2024-06-28T03:14:54.675Z</updated>
-  <id>https://wingsoftwilight.github.io/</id>
+  <id>https://muchjoy.github.io/</id>
   
   <author>
     <name>欢乐多</name>
@@ -18,8 +18,8 @@
   
   <entry>
     <title>mybatis详解—初始化</title>
-    <link href="https://wingsoftwilight.github.io/2024/06/17/Mybatis%E8%AF%A6%E8%A7%A3(%E4%B8%80)/"/>
-    <id>https://wingsoftwilight.github.io/2024/06/17/Mybatis%E8%AF%A6%E8%A7%A3(%E4%B8%80)/</id>
+    <link href="https://muchjoy.github.io/2024/06/17/Mybatis%E8%AF%A6%E8%A7%A3(%E4%B8%80)/"/>
+    <id>https://muchjoy.github.io/2024/06/17/Mybatis%E8%AF%A6%E8%A7%A3(%E4%B8%80)/</id>
     <published>2024-06-17T07:48:13.000Z</published>
     <updated>2024-06-28T03:14:54.675Z</updated>
     
@@ -33,17 +33,17 @@
     
     
     
-    <category term="框架｜中间件" scheme="https://wingsoftwilight.github.io/categories/%E6%A1%86%E6%9E%B6%EF%BD%9C%E4%B8%AD%E9%97%B4%E4%BB%B6/"/>
+    <category term="框架｜中间件" scheme="https://muchjoy.github.io/categories/%E6%A1%86%E6%9E%B6%EF%BD%9C%E4%B8%AD%E9%97%B4%E4%BB%B6/"/>
     
     
-    <category term="mybatis" scheme="https://wingsoftwilight.github.io/tags/mybatis/"/>
+    <category term="mybatis" scheme="https://muchjoy.github.io/tags/mybatis/"/>
     
   </entry>
   
   <entry>
     <title>HTTP协议之与WEB服务器</title>
-    <link href="https://wingsoftwilight.github.io/2024/06/05/HTTP%E5%8D%8F%E8%AE%AE%E4%B9%8B%E4%B8%8EWEB%E6%9C%8D%E5%8A%A1%E5%99%A8/"/>
-    <id>https://wingsoftwilight.github.io/2024/06/05/HTTP%E5%8D%8F%E8%AE%AE%E4%B9%8B%E4%B8%8EWEB%E6%9C%8D%E5%8A%A1%E5%99%A8/</id>
+    <link href="https://muchjoy.github.io/2024/06/05/HTTP%E5%8D%8F%E8%AE%AE%E4%B9%8B%E4%B8%8EWEB%E6%9C%8D%E5%8A%A1%E5%99%A8/"/>
+    <id>https://muchjoy.github.io/2024/06/05/HTTP%E5%8D%8F%E8%AE%AE%E4%B9%8B%E4%B8%8EWEB%E6%9C%8D%E5%8A%A1%E5%99%A8/</id>
     <published>2024-06-05T07:13:43.000Z</published>
     <updated>2024-06-06T10:14:52.050Z</updated>
     
@@ -57,17 +57,17 @@
     
     
     
-    <category term="网络协议" scheme="https://wingsoftwilight.github.io/categories/%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE/"/>
+    <category term="网络协议" scheme="https://muchjoy.github.io/categories/%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE/"/>
     
     
-    <category term="HTTP" scheme="https://wingsoftwilight.github.io/tags/HTTP/"/>
+    <category term="HTTP" scheme="https://muchjoy.github.io/tags/HTTP/"/>
     
   </entry>
   
   <entry>
     <title>HTTP协议之详情</title>
-    <link href="https://wingsoftwilight.github.io/2024/06/04/HTTP%E5%8D%8F%E8%AE%AE%E4%B9%8B%E8%AF%A6%E6%83%85/"/>
-    <id>https://wingsoftwilight.github.io/2024/06/04/HTTP%E5%8D%8F%E8%AE%AE%E4%B9%8B%E8%AF%A6%E6%83%85/</id>
+    <link href="https://muchjoy.github.io/2024/06/04/HTTP%E5%8D%8F%E8%AE%AE%E4%B9%8B%E8%AF%A6%E6%83%85/"/>
+    <id>https://muchjoy.github.io/2024/06/04/HTTP%E5%8D%8F%E8%AE%AE%E4%B9%8B%E8%AF%A6%E6%83%85/</id>
     <published>2024-06-04T07:23:46.000Z</published>
     <updated>2024-06-05T07:13:52.341Z</updated>
     
@@ -81,17 +81,17 @@
     
     
     
-    <category term="网络协议" scheme="https://wingsoftwilight.github.io/categories/%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE/"/>
+    <category term="网络协议" scheme="https://muchjoy.github.io/categories/%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE/"/>
     
     
-    <category term="HTTP" scheme="https://wingsoftwilight.github.io/tags/HTTP/"/>
+    <category term="HTTP" scheme="https://muchjoy.github.io/tags/HTTP/"/>
     
   </entry>
   
   <entry>
     <title>HTTP协议之基础</title>
-    <link href="https://wingsoftwilight.github.io/2024/06/03/HTTP%E5%8D%8F%E8%AE%AE%E4%B9%8B%E5%9F%BA%E7%A1%80/"/>
-    <id>https://wingsoftwilight.github.io/2024/06/03/HTTP%E5%8D%8F%E8%AE%AE%E4%B9%8B%E5%9F%BA%E7%A1%80/</id>
+    <link href="https://muchjoy.github.io/2024/06/03/HTTP%E5%8D%8F%E8%AE%AE%E4%B9%8B%E5%9F%BA%E7%A1%80/"/>
+    <id>https://muchjoy.github.io/2024/06/03/HTTP%E5%8D%8F%E8%AE%AE%E4%B9%8B%E5%9F%BA%E7%A1%80/</id>
     <published>2024-06-03T01:37:33.000Z</published>
     <updated>2024-06-04T08:15:37.572Z</updated>
     
@@ -105,17 +105,17 @@
     
     
     
-    <category term="网络协议" scheme="https://wingsoftwilight.github.io/categories/%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE/"/>
+    <category term="网络协议" scheme="https://muchjoy.github.io/categories/%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE/"/>
     
     
-    <category term="HTTP" scheme="https://wingsoftwilight.github.io/tags/HTTP/"/>
+    <category term="HTTP" scheme="https://muchjoy.github.io/tags/HTTP/"/>
     
   </entry>
   
   <entry>
     <title>Mysql详解(一)</title>
-    <link href="https://wingsoftwilight.github.io/2024/06/01/Mysql%E8%AF%A6%E8%A7%A3%EF%BC%88%E4%B8%80%EF%BC%89/"/>
-    <id>https://wingsoftwilight.github.io/2024/06/01/Mysql%E8%AF%A6%E8%A7%A3%EF%BC%88%E4%B8%80%EF%BC%89/</id>
+    <link href="https://muchjoy.github.io/2024/06/01/Mysql%E8%AF%A6%E8%A7%A3%EF%BC%88%E4%B8%80%EF%BC%89/"/>
+    <id>https://muchjoy.github.io/2024/06/01/Mysql%E8%AF%A6%E8%A7%A3%EF%BC%88%E4%B8%80%EF%BC%89/</id>
     <published>2024-06-01T14:41:31.000Z</published>
     <updated>2024-06-23T09:23:43.945Z</updated>
     
@@ -130,10 +130,10 @@
     
     
     
-    <category term="数据存储" scheme="https://wingsoftwilight.github.io/categories/%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/"/>
+    <category term="数据存储" scheme="https://muchjoy.github.io/categories/%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/"/>
     
     
-    <category term="mysql" scheme="https://wingsoftwilight.github.io/tags/mysql/"/>
+    <category term="mysql" scheme="https://muchjoy.github.io/tags/mysql/"/>
     
   </entry>
   

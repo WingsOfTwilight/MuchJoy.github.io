@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Mybatis详解（二）, 欢乐多">
+    <meta name="keywords" content="Mybatis配置, 欢乐多">
     <meta name="description" content="MyBatis是一个优秀的持久层框架，它支持自定义 SQL、存储过程以及高级映射。">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -17,7 +17,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Mybatis详解（二） | 欢乐多</title>
+    <title>Mybatis配置 | 欢乐多</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -298,7 +298,7 @@
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Mybatis详解（二）</h1>
+                    <h1 class="description center-align post-title">Mybatis配置</h1>
                 </div>
             </div>
         </div>
@@ -366,7 +366,7 @@
                 <p><strong>Mybatis架构图</strong></p>
 <p><img src="/../images/Mybatis%E6%9E%B6%E6%9E%84.png"></p>
 <p>接口层：主要就是和数据库交互。<br>数据处理层：可以说是MyBatis 的核心，负责具体的SQL查找、SQL解析、SQL执行和执行结果映射处理等，它主要的目的是根据调用的请求完成一次数据库操作。<br>mapper.xml配置sql和映射关系就是基于xml方式（基础支撑层）</p>
-<h2 id="配置解析方法"><a href="#配置解析方法" class="headerlink" title="配置解析方法"></a>配置解析方法</h2><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public Configuration parse() {</span><br><span class="line">  if (parsed) {</span><br><span class="line">    throw new BuilderException("Each XMLConfigBuilder can only be used once.");</span><br><span class="line">  }</span><br><span class="line">  parsed = true;</span><br><span class="line">   //configuration为根节点</span><br><span class="line">  parseConfiguration(parser.evalNode("/configuration"));</span><br><span class="line">  return configuration;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">  private void parseConfiguration(XNode root) {</span><br><span class="line">  try {</span><br><span class="line">    // issue #117 read properties first</span><br><span class="line">    propertiesElement(root.evalNode("properties"));</span><br><span class="line">    Properties settings = settingsAsProperties(root.evalNode("settings"));</span><br><span class="line">    loadCustomVfs(settings);</span><br><span class="line">    loadCustomLogImpl(settings);</span><br><span class="line">    typeAliasesElement(root.evalNode("typeAliases"));</span><br><span class="line">    pluginElement(root.evalNode("plugins"));</span><br><span class="line">    objectFactoryElement(root.evalNode("objectFactory"));</span><br><span class="line">    objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));</span><br><span class="line">    reflectorFactoryElement(root.evalNode("reflectorFactory"));</span><br><span class="line">    settingsElement(settings);</span><br><span class="line">    // read it after objectFactory and objectWrapperFactory issue #631</span><br><span class="line">    environmentsElement(root.evalNode("environments"));</span><br><span class="line">    databaseIdProviderElement(root.evalNode("databaseIdProvider"));</span><br><span class="line">    typeHandlerElement(root.evalNode("typeHandlers"));</span><br><span class="line">    mapperElement(root.evalNode("mappers"));</span><br><span class="line">  } catch (Exception e) {</span><br><span class="line">    throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);</span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="mybatis配置解析方法"><a href="#mybatis配置解析方法" class="headerlink" title="mybatis配置解析方法"></a>mybatis配置解析方法</h2><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public Configuration parse() {</span><br><span class="line">  if (parsed) {</span><br><span class="line">    throw new BuilderException("Each XMLConfigBuilder can only be used once.");</span><br><span class="line">  }</span><br><span class="line">  parsed = true;</span><br><span class="line">   //configuration为根节点</span><br><span class="line">  parseConfiguration(parser.evalNode("/configuration"));</span><br><span class="line">  return configuration;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">  private void parseConfiguration(XNode root) {</span><br><span class="line">  try {</span><br><span class="line">    // issue #117 read properties first</span><br><span class="line">    propertiesElement(root.evalNode("properties"));</span><br><span class="line">    Properties settings = settingsAsProperties(root.evalNode("settings"));</span><br><span class="line">    loadCustomVfs(settings);</span><br><span class="line">    loadCustomLogImpl(settings);</span><br><span class="line">    typeAliasesElement(root.evalNode("typeAliases"));</span><br><span class="line">    pluginElement(root.evalNode("plugins"));</span><br><span class="line">    objectFactoryElement(root.evalNode("objectFactory"));</span><br><span class="line">    objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));</span><br><span class="line">    reflectorFactoryElement(root.evalNode("reflectorFactory"));</span><br><span class="line">    settingsElement(settings);</span><br><span class="line">    // read it after objectFactory and objectWrapperFactory issue #631</span><br><span class="line">    environmentsElement(root.evalNode("environments"));</span><br><span class="line">    databaseIdProviderElement(root.evalNode("databaseIdProvider"));</span><br><span class="line">    typeHandlerElement(root.evalNode("typeHandlers"));</span><br><span class="line">    mapperElement(root.evalNode("mappers"));</span><br><span class="line">  } catch (Exception e) {</span><br><span class="line">    throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);</span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <p><strong>configuration为根节点</strong></p>
 <h2 id="配置文件元素"><a href="#配置文件元素" class="headerlink" title="配置文件元素"></a>配置文件元素</h2><h3 id="元素properties"><a href="#元素properties" class="headerlink" title="元素properties"></a>元素properties</h3><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--   方式一，引入外部db.properties文件 --&gt;</span><br><span class="line">&lt;properties resource="db.properties"&gt;&lt;/properties&gt;</span><br><span class="line">&lt;!--   方式二直接配置xml --&gt;</span><br><span class="line">&lt;properties&gt;</span><br><span class="line">    &lt;!-- 配置数据源 --&gt;</span><br><span class="line">    &lt;property name="driver" value="com.mysql.cj.jdbc.Driver" /&gt;</span><br><span class="line">    &lt;property name="url" value="jdbc:mysql://localhost:3306/test" /&gt;</span><br><span class="line">    &lt;property name="username" value="root" /&gt;</span><br><span class="line">    &lt;property name="password" value="123456" /&gt;</span><br><span class="line">&lt;/properties&gt;</span><br></pre></td></tr></tbody></table></figure>
 <p>Properties继承了Hashtable，如果同时配置2个，后加载的配置会覆盖之前的配置</p>
@@ -408,7 +408,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://MuchJoy.github.io/2024/06/17/Mybatis%E8%AF%A6%E8%A7%A3%EF%BC%88%E4%BA%8C%EF%BC%89/">https://MuchJoy.github.io/2024/06/17/Mybatis%E8%AF%A6%E8%A7%A3%EF%BC%88%E4%BA%8C%EF%BC%89/</a>
+                    <a href="https://MuchJoy.github.io/2024/06/17/Mybatis%E9%85%8D%E7%BD%AE/">https://MuchJoy.github.io/2024/06/17/Mybatis%E9%85%8D%E7%BD%AE/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -530,12 +530,12 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2024/06/17/Mybatis%E8%AF%A6%E8%A7%A3(%E4%B8%80)/">
+                <a href="/2024/06/17/Mybatis%E5%88%9D%E5%A7%8B%E5%8C%96/">
                     <div class="card-image">
                         
-                        <img src="/../images/Mybatis%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.png" class="responsive-img" alt="Mybatis详解（一）">
+                        <img src="/../images/Mybatis%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.png" class="responsive-img" alt="Mybatis初始化">
                         
-                        <span class="card-title">Mybatis详解（一）</span>
+                        <span class="card-title">Mybatis初始化</span>
                     </div>
                 </a>
                 <div class="card-content article-content">

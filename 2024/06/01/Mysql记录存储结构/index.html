@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Mysql详解（二）, 欢乐多">
-    <meta name="description" content="MySQL索引是一种数据结构，用于帮助快速查找数据库表中的记录。">
+    <meta name="keywords" content="Mysql记录存储结构, 欢乐多">
+    <meta name="description" content="数据库（Database）是按照数据结构来组织、存储和管理数据的仓库。">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -17,7 +17,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Mysql详解（二） | 欢乐多</title>
+    <title>Mysql记录存储结构 | 欢乐多</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -293,12 +293,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/../images/B+%E6%A0%91.png')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/../images/1717725217845.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Mysql详解（二）</h1>
+                    <h1 class="description center-align post-title">Mysql记录存储结构</h1>
                 </div>
             </div>
         </div>
@@ -363,18 +363,63 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p><strong>B+树的结构</strong></p>
+                <p>服务器程序在处理来自客户端的查询请求时，大致需要分为3部分：连接管理，解析与优化，存储引擎。<br><img src="/../images/1717725217845.jpg"></p>
+<h2 id="InnoDB记录存储结构"><a href="#InnoDB记录存储结构" class="headerlink" title="InnoDB记录存储结构"></a>InnoDB记录存储结构</h2><p><strong>InnoDB行</strong> : InnoDB存储引擎有4种不同类型的行格式。分别是COMPACT，REDUNDANT，DYNAMIC，COMPRESSED。</p>
+<h3 id="InnoDB-COMPACT行格式"><a href="#InnoDB-COMPACT行格式" class="headerlink" title="InnoDB-COMPACT行格式"></a>InnoDB-COMPACT行格式</h3><p><img src="/../images/COMPACT%E8%A1%8C%E6%A0%BC%E5%BC%8F.png"></p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">create table record_format_demo(</span><br><span class="line">    c1 varchar(10),</span><br><span class="line">    c2 varchar(10) not null,</span><br><span class="line">    c3 char(10),</span><br><span class="line">    c4 varchar(10)</span><br><span class="line">) charset=ascii row_format = compact;</span><br><span class="line"></span><br><span class="line">insert into record_format_demo (c1,c2,c3,c4)values('aaaa','bbb','cc','d'),('eeee','fff',NULL,NULL);</span><br></pre></td></tr></tbody></table></figure>
+
+<p><strong>1、变长字段长度列表</strong><br>分为2部分：1、真正的数据内容；2、该数据占用的字节数。变长字段字节是按照逆序排列。</p>
 <blockquote>
-<p>根节点：B+树的等层节点，包含键值和指向子节点的指针。<br>内部节点：位于根节点和叶子结点之间的节点，包含键值和指向字节点的指针。<br>叶子节点：B+树最底层的节点，包含所有的数据记录和下一个叶子节点的指针。</p>
-</blockquote>
-<p><strong>B+树的特点</strong></p>
+<p>★ 并不是所有记录都有这个变长字段长度列表部分，如果表中所有的列都不是变长数据类型或者所有的值都是NULL的话，就不需要变长字段长度列表。<br>★ 引入W字节来表示一个字符，utf8mb4字符集种W=4，utf8字符集中W=3,gbk字符集中W=2；引入M表示字符；引入L表示实际存储的字节数；对于VARCHAR(M)来说，最多占用字节数就是M * W。<br>★ <strong>长度前缀</strong>使用1个字节表示，还是用2个字节表示。规则如下：</p>
 <blockquote>
-<p>1、所有的数据都存储在叶子节点上，非叶子节点只存储键值和指向字节点的指针。<br>2、顺序访问指针，每个叶子节点都包含一个指向下一个叶子节点的指针。使得B+树可以高效的进行顺序扫描。<br>3、平衡树，即从根节点到任何叶子节点的路径长度相同，从而保证了查询，插入，删除操作的时间复杂度都是O(log n).<br>4、高扇出性，由于每个节点都包含多个叶子节点，B+树的高低较低，使得磁盘I/O操作更高效。</p>
+<p>如果M * W &lt;= 255,那么使用一个字节的长度前缀。<br>如果M * W &gt;= 255,则又分2种情况：1、如果L &lt;= 127 则用1个字节的长度前缀；2、如果 L &gt; 127 ,则用2个字节的长度前缀。</p>
 </blockquote>
-<p><strong>B+树在mysql中的应用</strong></p>
+</blockquote>
+<p><strong>2、NULL值列表</strong></p>
 <blockquote>
-<p>聚簇索引：InnoDB表的主键索引实际上是一个B+树，表中的数据行按照主键的顺序存储在叶子节点中。<br>二级索引：非主键索引也是B+树结构，叶子节点存储索引列和主键值，用于快速定位数据行。</p>
+<p>★ 只通知允许为存储NULL的列。<br>★ 如果表中没有允许存储NULL的列，则NULL值列表就不存在了。<br>★ NULL值标志位用二进制记录，按照列的顺序逆序排列。值为1时，代表为NULL，为0时，代表不为NULL。</p>
 </blockquote>
+<p><strong>3、记录头信息</strong></p>
+<blockquote>
+<p>★由固定的5个字节组成，也就是40位二进制组成。<br><img src="/../images/compact-%E8%AE%B0%E5%BD%95%E5%A4%B4%E4%BF%A1%E6%81%AF.png"></p>
+</blockquote>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">预留位1                  1位             没有使用    </span><br><span class="line">预留位2                  1位             没有使用    </span><br><span class="line">deleted_flag            1位             标记是否被删除</span><br><span class="line">min_rec_flag            1位             最小记录标记，通常用来标记页面中的最小记录(索引优化，快速定位最小记录)</span><br><span class="line">n_owned                 4位             用于表示当前记录拥有记录槽(solt)的数量，这些槽可以用来存储实际的记录数据</span><br><span class="line">                                            也可以用来管理页中自由空间：管理记录链表，优化页面存储</span><br><span class="line">heap_no                 13位            标识记录在页中的位置，它是记录在数据页中的唯一标识符，可以帮助快速定</span><br><span class="line">                                            位特定记录； 来管理和组织页中的记录。它在记录的插入、更新和删除操作中起到关键作用；  有助于页内记录的排序和管理。</span><br><span class="line">record_type             3位             区分记录类型： 0 (ORDINARY_RECORD)：普通记录，表示实际的用户数据记录</span><br><span class="line">                                                    1 (NODE_POINTER)：节点指针，表示B+树中指向子节点的指针记录。</span><br><span class="line">                                                    2 (INFIMUM)：页的最小记录（infimum record），用于页的边界管理。</span><br><span class="line">                                                    3 (SUPREMUM)：页的最大记录（supremum record），用于页的边界管理。</span><br><span class="line">next_record             16位            用于指向下一条记录(表示下一条记录的相对位置)；用途：顺序扫描；范围查询；</span><br><span class="line">                                            插入和删除操作</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="/../images/COMPACT%E8%AF%A6%E7%BB%86.png"></p>
+<p><strong>4、记录的真实数据</strong></p>
+<p>mysql会为每个记录默认添加一些列（隐藏列）DB_ROW_ID,DB_TRX_ID,DB_ROLL_PTR。<br>InnoDB主键生成策略：  1、优先使用自定义主键；2、其次不允许为空的UNQUE（唯一）键作为主键；3、最后默认添加row_id的隐藏列作为主键</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">列名            是否必需        占用字节            描述</span><br><span class="line">row_id          否              6字节           行ID，唯一标识</span><br><span class="line">trx_id          是              6字节           事务ID</span><br><span class="line">roll_pointer    是              7字节           回滚指针</span><br></pre></td></tr></tbody></table></figure>
+<p>CHAR(M)类型是定长，不属于变长字段，不会记录到变长字段长度列表中。</p>
+<h3 id="InnoDB-REDUNDANT行格式"><a href="#InnoDB-REDUNDANT行格式" class="headerlink" title="InnoDB-REDUNDANT行格式"></a>InnoDB-REDUNDANT行格式</h3><p>REDUNDANT行格式是mysql5.0之前就在使用的一种行格式。<br><img src="/../images/REDUNDANT%E8%A1%8C%E6%A0%BC%E5%BC%8F.png"></p>
+<p><strong>1、字段长度偏移列表</strong></p>
+<p>REDUDANT行格式会把记录中<strong>所有的</strong>列的长度信息都按照逆序存储到字段长度偏移列表中。而且采用两个相邻偏移量的差值来计算各个列的长度。<br>也是逆序排列</p>
+<p>与COMPACT行格式相比，REDUNDANT行格式多了n_field和1byte_offs_flag这两个属性；没有record_type这个属性。</p>
+<p>REDUNDANT行格式没有NULL值列表：在字段长度偏移列表中对各列对应的偏移量做了特殊处理—将对应的偏移量值的第一位作为是否为NULL的依据，也称为NULL值比特位。如果该值为1，该列就为NULL。</p>
+<p>如果存储的NULL值字段是定长字段，则NULL值也将占用记录的真实数据部分；如果存储的NULL值字段是变长数据类型，则不在记录的真实数据部分占用任何存储空间。</p>
+<h3 id="溢出列"><a href="#溢出列" class="headerlink" title="溢出列"></a>溢出列</h3><p>InnoDB中磁盘和内存交互的基本单位是页。也就是说InnoDB是以页为基本单位来管理存储空间的。一个页的大小一般是16kb。在COMPACT和REDUNDANT行格式中，对于占用存储空间非常多的列。在记录真实数据处只会存储该列的一部分数据，而把<strong>剩余的数据分散存储到几个其他的页</strong>中。然后在记录真实数据处用20字节存储指向这些页的<strong>地址</strong>（还有存粗在其他页数据的<strong>字节数</strong>）。</p>
+<p><img src="/../images/%E6%BA%A2%E5%87%BA%E9%A1%B5.png"></p>
+<p><strong>一个列存储多少字节之后会变成溢出列呢？</strong> 一个页默认16kb也就是16384字节，mysql中规定一个页中至少存放2行数据。<br>1、除了存放记录外，还需要存储一些额外的信息。共132字节空间。<br>2、每个记录需要额外信息是27个字节：2字节存储真实数据长度；1字节存储NULL值；5个字节存储头信息；6个字节的Row_id列；6字节的trx_id列；7字节的roll_pointer列。假设一个列的真实数据占用的字节数为n：如果该列不发生溢出现象，就需要满足不等式：132+2*(27+n)&lt;16384。</p>
+<p><strong>mysql版本5.7之后，默认使用DYNAMIC行格式</strong> ，DYNAMIC行格式和COMPRESSED行格式与COMPACT类似：但是处理<strong>溢出列不同</strong>：DYNAMIC行格式不会存储真实数据，而是把所有的真实数据都存储到溢出页中。只记录真实数据处存储20字节大小的指向溢出页的地址。COMPRESSED行格式会采用压缩算法对页面进行压缩。以节省空间。</p>
+<p><strong>REDUNDANT是一种比较原始的韩格式，非紧凑型。而DYNAMIC，COMPACT，COMPRESSED 是较新的行格式，紧凑型(占用存储空间更少)</strong></p>
+<h2 id="InnoDB数据页结构"><a href="#InnoDB数据页结构" class="headerlink" title="InnoDB数据页结构"></a>InnoDB数据页结构</h2><p><img src="/../images/%E6%95%B0%E6%8D%AE%E9%A1%B5%E7%BB%93%E6%9E%84.png"></p>
+<h3 id="记录存储"><a href="#记录存储" class="headerlink" title="记录存储"></a>记录存储</h3><p>第二条记录被标记为删除，将被删除的记录加入到垃圾链表中是2个阶段。多条被删除的记录next_record会形成垃圾链表。<br>Infimum记录和Supremum记录没有主键，Infimum记录是页面中最小的记录，Supremum记录是页面中最大的记录。<br>堆中的Heap_no值被分配之后就不会再改变，即使删除了某条记录也不会变。<br>next_record属性，箭头总是指向下一条记录的头记录和真实数据中间位置（<strong>紫色箭头</strong>），因为记录头逆序排列，向左读区是记录头信息，向右读区是真实数据。变长字段长度列表，null列表都是逆序排列，记录中靠前的字段和对应的字段信息在内存中更近，提高缓存命中率。<br>被删除的记录不会再被上一条记录指向（<strong>红色箭头</strong>）</p>
+<p><img src="/../images/%E6%95%B0%E6%8D%AE%E9%A1%B5%E2%80%94%E8%AE%B0%E5%BD%95%E5%A4%B4%E4%BF%A1%E6%81%AF.png"></p>
+<h3 id="页目录"><a href="#页目录" class="headerlink" title="页目录"></a>页目录</h3><p>将所有的记录(除去已经移除到垃圾链表的记录)划分为组，将每组中最后一条记录在页面只能够的地址偏移量（该记录真实数据与页面第0个字节之间的距离）单独提取出来（带头大哥属性n_owned为该组中记录数量），按照顺序存储到靠近尾部的地方。这个就是Page Directory（页目录）。页中这些地址偏移量称为槽（Slot），每个槽占用2个字节，页目录就是由多个槽组成的。</p>
+<p>每个分组中记录条数<strong>规定</strong>：Infimum记录所在的分组只能有一条记录。Supremum记录所在的分组拥有的记录条数只能在1～8条之间。其他的分组中记录的条数范围只能在4～8条之间。</p>
+<blockquote>
+<p>1、初始情况，一个页只有Infimum和Supremum记录，也就是2个分组。<br>2、每插入一条记录。都会从页目录中找到对应记录的主键值比待插入记录主键值大并且差值最小的槽。然后把对应槽的n_owned加1.直到改组中记录数等于8.<br>3、当一个组中的数据等于8之后，再插入记录，会将组中的记录拆分成2个组。拆分过程中新增一个槽。</p>
+</blockquote>
+<h3 id="页面头部"><a href="#页面头部" class="headerlink" title="页面头部"></a>页面头部</h3><p>Page Header 占用固定56个字节，专门存储各种状态信息。比如数据也中存了多少记录，Free Space字页面中的地址偏移量，也目录中存储了多少槽等。</p>
+<blockquote>
+<p>PAGE_N_DIR_SLOTS       2字节       在页目录中的槽数量<br>PAGE_HEAP_TOP           2字节       还未使用的空间最小地址，从改地址之后就是Free Space<br>PAGE_N_HEAP             2字节       第一位表示是否为紧凑型，后15位表示本页中的堆中记录的数量<br>PAGE_FREE               2字节       各个已删除的记录通过next_record组成一个单向链表，这个单向链表中记录的所占用的存储空间可<br>                                        以被重新利用。PAGE_FREEbao表示该链表头节点对应记录在页面中的偏移量。<br>PAGE_GARBAGE            2字节       已删除记录占用的字节数<br>PAGE_LAST_INSERT        2字节       最后插入记录的位置<br>PAGE_DIRECTION          2字节       记录插入的方向<br>PAGE_N_DIRECTION        2字节       一个方向连续插入的记录数量<br>PAGE_N_RECS             2字节       该也中用户记录的数量<br>PAGE_MAX_TRX_ID         2字节       修改当前页面的最大事物ID，仅存在二级索引页面中定义<br>PAGE_LEVEL              2字节       当前页在B+数中所处的层级<br>PAGE_INDEX_ID           8字节       索引ID，表示当前页属于那个索引<br>PAGE_BTR_SRE_LEAF       10字节      B+数也字节点段的头部信息，仅在B+数的根页面中定义<br>PAGE_BTR_SEG_TOP        2字节       B+数非叶字节点段的头部信息，仅存在B+数的根页面中定义</p>
+</blockquote>
+<h3 id="文件头部"><a href="#文件头部" class="headerlink" title="文件头部"></a>文件头部</h3><p><strong>File Header</strong>部分占用固定38字节，描述一些通用于各种页的信息，不如页扽编号，上一个页和下一个页面等等。</p>
+<p><strong>各种页面的类型</strong>：</p>
+<blockquote>
+<p>FILE_PAGE_TYPE_ALLOCATED           最新分配，还未使用<br>FIL_PAGE_UNDO_LOG                   undo日志页<br>FIL_PAGE_INODE                      存储段的信息<br>FIL_PAGE_IBUG_FREE_LIST             Change Buffer空闲列表<br>FIL_PAGE_IBUF_BITMAP                Change Buffer的一些属性<br>FIL_PAGE_TYPE_SYS                   存储一些系统数据<br>FIL_PAGE_TYPE_TRX_SYS               事务系统数据<br>FIL_PAGE_TYPE_FSP_HDR               表空间头部信息<br>FIL_PAGE_TYPE_FSP_HDR               存储区的一些属性<br>FIL_PAGE_TYPE_BLOB                  溢出页<br>FIL_PAGE_INDEX                      索引页（数据页）</p>
+</blockquote>
+<p><strong>存储记录的数据页面是可以组成一个双向链表</strong></p>
+<h3 id="文件尾部"><a href="#文件尾部" class="headerlink" title="文件尾部"></a>文件尾部</h3><p>File Trailer由8个字节组成。用于校验页是否完整。</p>
 
                 
             </div>
@@ -401,7 +446,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://MuchJoy.github.io/2024/06/29/Mysql%E8%AF%A6%E8%A7%A3%EF%BC%88%E4%BA%8C%EF%BC%89/">https://MuchJoy.github.io/2024/06/29/Mysql%E8%AF%A6%E8%A7%A3%EF%BC%88%E4%BA%8C%EF%BC%89/</a>
+                    <a href="https://MuchJoy.github.io/2024/06/01/Mysql%E8%AE%B0%E5%BD%95%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84/">https://MuchJoy.github.io/2024/06/01/Mysql%E8%AE%B0%E5%BD%95%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -519,28 +564,75 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2024/06/29/Mysql%E8%AF%A6%E8%A7%A3%EF%BC%88%E4%BA%8C%EF%BC%89/">
+                <a href="/2024/06/03/HTTP%E5%8D%8F%E8%AE%AE%E4%B9%8B%E5%9F%BA%E7%A1%80/">
                     <div class="card-image">
                         
-                        <img src="/../images/B+%E6%A0%91.png" class="responsive-img" alt="Mysql详解（二）">
+                        <img src="/../images/HTTP%E6%A6%82%E8%BF%B0.jpg" class="responsive-img" alt="HTTP协议之基础">
                         
-                        <span class="card-title">Mysql详解（二）</span>
+                        <span class="card-title">HTTP协议之基础</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            MySQL索引是一种数据结构，用于帮助快速查找数据库表中的记录。
+                            HTTP 是一种用作获取诸如 HTML 文档这类资源的协议。
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2024-06-03
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE/" class="post-category">
+                                    网络协议
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/HTTP/">
+                        <span class="chip bg-color">HTTP</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                本篇&nbsp;<i class="far fa-dot-circle"></i>
+            </div>
+            <div class="card">
+                <a href="/2024/06/01/Mysql%E8%AE%B0%E5%BD%95%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84/">
+                    <div class="card-image">
+                        
+                        <img src="/../images/1717725217845.jpg" class="responsive-img" alt="Mysql记录存储结构">
+                        
+                        <span class="card-title">Mysql记录存储结构</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            数据库（Database）是按照数据结构来组织、存储和管理数据的仓库。
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-06-29
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-06-01
                             </span>
                         <span class="publish-author">
                             
@@ -560,54 +652,6 @@
                     
                     <a href="/tags/mysql/">
                         <span class="chip bg-color">mysql</span>
-                    </a>
-                    
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="card">
-                <a href="/2024/06/17/Mybatis%E8%AF%A6%E8%A7%A3(%E4%B8%80)/">
-                    <div class="card-image">
-                        
-                        <img src="/../images/Mybatis%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.png" class="responsive-img" alt="Mybatis详解（一）">
-                        
-                        <span class="card-title">Mybatis详解（一）</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            MyBatis是一个优秀的持久层框架，它支持自定义 SQL、存储过程以及高级映射。
-                        
-                    </div>
-                    <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-06-17
-                            </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/%E6%A1%86%E6%9E%B6%EF%BD%9C%E4%B8%AD%E9%97%B4%E4%BB%B6/" class="post-category">
-                                    框架｜中间件
-                                </a>
-                            
-                            
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/mybatis/">
-                        <span class="chip bg-color">mybatis</span>
                     </a>
                     
                 </div>

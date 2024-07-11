@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Mybatis—配置, 欢乐多">
-    <meta name="description" content="MyBatis是一个优秀的持久层框架，它支持自定义 SQL、存储过程以及高级映射。">
+    <meta name="keywords" content="Mybatis详解四, 欢乐多">
+    <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -17,7 +17,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Mybatis—配置 | 欢乐多</title>
+    <title>Mybatis详解四 | 欢乐多</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -293,12 +293,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/../images/Mybatis%E6%9E%B6%E6%9E%84.png')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/11.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Mybatis—配置</h1>
+                    <h1 class="description center-align post-title">Mybatis详解四</h1>
                 </div>
             </div>
         </div>
@@ -320,25 +320,12 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                    <div class="article-tag">
-                        
-                            <a href="/tags/mybatis/">
-                                <span class="chip bg-color">mybatis</span>
-                            </a>
-                        
-                    </div>
+                          <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                          </div>
                     
                 </div>
                 <div class="col s5 right-align">
-                    
-                    <div class="post-cate">
-                        <i class="fas fa-bookmark fa-fw icon-category"></i>
-                        
-                            <a href="/categories/%E6%A1%86%E6%9E%B6%EF%BD%9C%E4%B8%AD%E9%97%B4%E4%BB%B6/" class="post-category">
-                                框架｜中间件
-                            </a>
-                        
-                    </div>
                     
                 </div>
             </div>
@@ -363,26 +350,7 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p><strong>Mybatis架构图</strong></p>
-<p><img src="/../images/Mybatis%E6%9E%B6%E6%9E%84.png"></p>
-<p>接口层：主要就是和数据库交互。<br>数据处理层：可以说是MyBatis 的核心，负责具体的SQL查找、SQL解析、SQL执行和执行结果映射处理等，它主要的目的是根据调用的请求完成一次数据库操作。<br>mapper.xml配置sql和映射关系就是基于xml方式（基础支撑层）</p>
-<h2 id="mybatis配置解析方法"><a href="#mybatis配置解析方法" class="headerlink" title="mybatis配置解析方法"></a>mybatis配置解析方法</h2><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public Configuration parse() {</span><br><span class="line">  if (parsed) {</span><br><span class="line">    throw new BuilderException("Each XMLConfigBuilder can only be used once.");</span><br><span class="line">  }</span><br><span class="line">  parsed = true;</span><br><span class="line">   //configuration为根节点</span><br><span class="line">  parseConfiguration(parser.evalNode("/configuration"));</span><br><span class="line">  return configuration;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">  private void parseConfiguration(XNode root) {</span><br><span class="line">  try {</span><br><span class="line">    // issue #117 read properties first</span><br><span class="line">    propertiesElement(root.evalNode("properties"));</span><br><span class="line">    Properties settings = settingsAsProperties(root.evalNode("settings"));</span><br><span class="line">    loadCustomVfs(settings);</span><br><span class="line">    loadCustomLogImpl(settings);</span><br><span class="line">    typeAliasesElement(root.evalNode("typeAliases"));</span><br><span class="line">    pluginElement(root.evalNode("plugins"));</span><br><span class="line">    objectFactoryElement(root.evalNode("objectFactory"));</span><br><span class="line">    objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));</span><br><span class="line">    reflectorFactoryElement(root.evalNode("reflectorFactory"));</span><br><span class="line">    settingsElement(settings);</span><br><span class="line">    // read it after objectFactory and objectWrapperFactory issue #631</span><br><span class="line">    environmentsElement(root.evalNode("environments"));</span><br><span class="line">    databaseIdProviderElement(root.evalNode("databaseIdProvider"));</span><br><span class="line">    typeHandlerElement(root.evalNode("typeHandlers"));</span><br><span class="line">    mapperElement(root.evalNode("mappers"));</span><br><span class="line">  } catch (Exception e) {</span><br><span class="line">    throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);</span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-<p><strong>configuration为根节点</strong></p>
-<h2 id="配置文件元素"><a href="#配置文件元素" class="headerlink" title="配置文件元素"></a>配置文件元素</h2><h3 id="元素properties"><a href="#元素properties" class="headerlink" title="元素properties"></a>元素properties</h3><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--   方式一，引入外部db.properties文件 --&gt;</span><br><span class="line">&lt;properties resource="db.properties"&gt;&lt;/properties&gt;</span><br><span class="line">&lt;!--   方式二直接配置xml --&gt;</span><br><span class="line">&lt;properties&gt;</span><br><span class="line">    &lt;!-- 配置数据源 --&gt;</span><br><span class="line">    &lt;property name="driver" value="com.mysql.cj.jdbc.Driver" /&gt;</span><br><span class="line">    &lt;property name="url" value="jdbc:mysql://localhost:3306/test" /&gt;</span><br><span class="line">    &lt;property name="username" value="root" /&gt;</span><br><span class="line">    &lt;property name="password" value="123456" /&gt;</span><br><span class="line">&lt;/properties&gt;</span><br></pre></td></tr></tbody></table></figure>
-<p>Properties继承了Hashtable，如果同时配置2个，后加载的配置会覆盖之前的配置</p>
-<h3 id="元素settings"><a href="#元素settings" class="headerlink" title="元素settings"></a>元素settings</h3><p>完整的setttings配置地址：<a target="_blank" rel="noopener" href="https://mybatis.org/mybatis-3/zh_CN/configuration.html">https://mybatis.org/mybatis-3/zh_CN/configuration.html</a></p>
-<h2 id="Mapper-xml文件配置"><a href="#Mapper-xml文件配置" class="headerlink" title="Mapper.xml文件配置"></a>Mapper.xml文件配置</h2><h3 id="元素cache-ref"><a href="#元素cache-ref" class="headerlink" title="元素cache-ref"></a>元素cache-ref</h3><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;mapper namespace="com.read.mapper.StudentMapper"&gt;</span><br><span class="line">  &lt;!--两个 Mapper 文件将共享相同的缓存实现，避免了重复定义缓存配置的问题。--&gt;</span><br><span class="line">  &lt;cache-ref namespace="com.example.mapper.UserMapper"/&gt;</span><br><span class="line">&lt;/mapper&gt;</span><br></pre></td></tr></tbody></table></figure>
-<h3 id="元素cache"><a href="#元素cache" class="headerlink" title="元素cache"></a>元素cache</h3><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--  当 blocking 属性设置为 true 时，MyBatis 使用的缓存实现（如 Ehcache）会在缓存失效时阻塞其他并发请求，</span><br><span class="line">  直到第一个线程重新查询并更新缓存，从而避免大量请求同时打到数据库上。--&gt;</span><br><span class="line">&lt;cache flushInterval="缓存刷新间隔" size="缓存的大小" eviction="缓存淘汰策略"</span><br><span class="line">       readOnly="缓存是否只读"  type="缓存类型"&gt;</span><br><span class="line">  &lt;property name="blocking" value="true"/&gt;</span><br><span class="line">&lt;/cache&gt;</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
-
-<h3 id="元素resultMap"><a href="#元素resultMap" class="headerlink" title="元素resultMap"></a>元素resultMap</h3><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--</span><br><span class="line">type:映射到java对象类型</span><br><span class="line">autoMapping: 是否自动映射未明确指定的字段，如果为False，只会映射resultMap中配置的字段，为True会尝试自动映射resultMap中没有配置的字段</span><br><span class="line">--&gt;</span><br><span class="line">&lt;resultMap id="studentMap" type="com.read.model.Student" autoMapping = "true"&gt;</span><br><span class="line">  &lt;!--</span><br><span class="line">    如果字段名与列名不一致，可以使用column（列名）和property（java对象字段名）</span><br><span class="line">    如果需要类型转换，可以使用 javaType（Java类型） 和 jdbcType（jdbc类型） 属性</span><br><span class="line">  --&gt;</span><br><span class="line">  &lt;result column="SId" jdbcType="VARCHAR" property="sid" /&gt;</span><br><span class="line">  &lt;result column="Sname" jdbcType="VARCHAR" property="sname" /&gt;</span><br><span class="line">  &lt;result column="Sage" jdbcType="TIMESTAMP" property="sage" /&gt;</span><br><span class="line">  &lt;result column="Ssex" jdbcType="VARCHAR" property="ssex" /&gt;</span><br><span class="line"></span><br><span class="line">  &lt;!--</span><br><span class="line">      typeHandler：处理类型转换，自定义转换类将数据库列值转换java对象字段值，或者将java对象字段值专程数据库列值</span><br><span class="line">      &lt;result column="example" property="example"  typeHandler="org.example.StringTrimTypeHandler"/&gt;</span><br><span class="line">  --&gt;</span><br><span class="line"></span><br><span class="line">  &lt;!-- columnPrefix 用于指定列名前缀。这在处理多表查询结果时非常有用，可以避免列名冲突 --&gt;</span><br><span class="line">  &lt;association property="address" javaType="org.example.Address" columnPrefix="address_"&gt;</span><br><span class="line">      &lt;id property="id" column="address_id"/&gt;</span><br><span class="line">      &lt;result property="street" column="address_street"/&gt;</span><br><span class="line">  &lt;/association&gt;</span><br><span class="line"></span><br><span class="line">   &lt;!-- composites 用于定义复合列。复合列用于多个列值共同组成一个字段的值 --&gt;</span><br><span class="line">   &lt;result property="fullName" column="{first_name=firstName, last_name=lastName}" composites="true"/&gt;</span><br><span class="line"></span><br><span class="line">&lt;/resultMap&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-<h3 id="元素resultSet"><a href="#元素resultSet" class="headerlink" title="元素resultSet"></a>元素resultSet</h3><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--resultSet + Collection 返回结果集：再student对象中定义List&lt;Course&gt;属性--&gt;</span><br><span class="line">    &lt;resultMap id="studentMap1" type="com.read.model.Student"&gt;</span><br><span class="line">    &lt;collection property="courses" ofType = "com.read.model.Course" resultSet="courses"&gt;</span><br><span class="line">      &lt;result column="CId" jdbcType="VARCHAR" property="cid" /&gt;</span><br><span class="line">      &lt;result column="Cname" jdbcType="VARCHAR" property="cname" /&gt;</span><br><span class="line">      &lt;result column="TId" jdbcType="VARCHAR" property="tid" /&gt;</span><br><span class="line">    &lt;/collection&gt;</span><br><span class="line">  &lt;/resultMap&gt;</span><br><span class="line">  &lt;select id="selectAll1" resultSets="Student,courses" resultMap="studentMap1"&gt;</span><br><span class="line">    select * from student where SId = #{sid}</span><br><span class="line">    select * from course where SId = #{sid}</span><br><span class="line">  &lt;/select&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-<h3 id="元素SQL-include-select-insert"><a href="#元素SQL-include-select-insert" class="headerlink" title="元素SQL &amp; include &amp; select &amp; insert"></a>元素SQL &amp; include &amp; select &amp; insert</h3><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"> &lt;!-- id : 定义 SQL 语句的唯一标识符</span><br><span class="line">    parameterType：传递SQL语句的参数类型</span><br><span class="line">    resultType:返回结果的类型</span><br><span class="line">    resultMap:引用自定义的resultMap</span><br><span class="line">    flushCache；是否在语句执行后刷新内存</span><br><span class="line">    useCache：是否使用二级缓存</span><br><span class="line">    timeout：查询超时时间</span><br><span class="line">    fetchSize：JDBC的fetch size。类似分页。如果有1000行数据，fetchSize设置200.会执行5次，最终查到1000行数据</span><br><span class="line">    statementType：语句类型，STATEMENT：直接执行sql，不预编译；PREPARED：编译sql语句支持参数华执行，防止sql注入；CALLABLE用于调用存储过程</span><br><span class="line">    resultOrdered：结果是否有序。处理多个结果集的时候，比如resultMap 的ID为studentMap1示例 --&gt;</span><br><span class="line"></span><br><span class="line">&lt;!--  SQL 片段 通过include引入--&gt;</span><br><span class="line">&lt;sql id="base_sql_column"&gt;&lt;/sql&gt;</span><br><span class="line">&lt;select id="selectAll" resultType="com.read.model.Student" parameterType="int" resultMap= "studentMap" &gt;</span><br><span class="line">  select SId,</span><br><span class="line">  &lt;include refid="base_sql_column"&gt;&lt;/include&gt; </span><br><span class="line">  from student</span><br><span class="line">&lt;/select&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&lt;!--</span><br><span class="line">  parameterType：传递SQL语句的参数类型</span><br><span class="line">  flushCache：刷新一级缓存，如果启用了二级缓存，也会刷新</span><br><span class="line">  keyProperty(对象中的属性名)：自动生成的键值对应的属性，通常与useGeneratedKeys，keyColumn（数据库中的列名，与java对象属性不一致使用）</span><br><span class="line">  一起使用。useGeneratedKeys="true" keyProperty="sid" keyColumn="SId"插入数据后，会返回主键值。</span><br><span class="line">  databaseId：区分不同的数据库配置，实现对不同数据库系统的特定 SQL 优化或适配</span><br><span class="line">  --&gt;</span><br><span class="line">&lt;insert id="insert" parameterType="com.read.model.Student" useGeneratedKeys="true" keyProperty="sid" keyColumn="SId" &gt;</span><br><span class="line">  insert into student (SId, Sname, Sage, </span><br><span class="line">    Ssex)</span><br><span class="line">  values (#{sid,jdbcType=VARCHAR}, #{sname,jdbcType=VARCHAR}, #{sage,jdbcType=TIMESTAMP}, </span><br><span class="line">    #{ssex,jdbcType=VARCHAR})</span><br><span class="line">&lt;/insert&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-
-
-
+                
                 
             </div>
             <hr/>
@@ -408,7 +376,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://MuchJoy.github.io/2024/06/17/Mybatis%E9%85%8D%E7%BD%AE/">https://MuchJoy.github.io/2024/06/17/Mybatis%E9%85%8D%E7%BD%AE/</a>
+                    <a href="https://MuchJoy.github.io/2024/07/11/Mybatis%E8%AF%A6%E8%A7%A3%E5%9B%9B/">https://MuchJoy.github.io/2024/07/11/Mybatis%E8%AF%A6%E8%A7%A3%E5%9B%9B/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -445,11 +413,7 @@
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            
-                                <a href="/tags/mybatis/">
-                                    <span class="chip bg-color">mybatis</span>
-                                </a>
-                            
+                            <span class="chip bg-color">无标签</span>
                         </div>
                     
                 </div>
@@ -526,28 +490,67 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2024/06/17/Mybatis%E8%AF%A6%E8%A7%A3%EF%BC%88%E4%BA%8C%EF%BC%89/">
+                <a href="/2024/07/11/Mybatis%E8%AF%A6%E8%A7%A3%E5%9B%9B/">
                     <div class="card-image">
                         
-                        <img src="/../images/Mybatis%E6%9E%B6%E6%9E%84.png" class="responsive-img" alt="Mybatis详解（二）">
                         
-                        <span class="card-title">Mybatis详解（二）</span>
+                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="Mybatis详解四">
+                        
+                        <span class="card-title">Mybatis详解四</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            MyBatis是一个优秀的持久层框架，它支持自定义 SQL、存储过程以及高级映射。
+                            
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2024-06-17
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-07-11
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            欢乐多
+                            
                         </span>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2024/07/01/Mybatis%E2%80%94sqlSession%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/">
+                    <div class="card-image">
+                        
+                        <img src="/../images/SqlSession.png" class="responsive-img" alt="Mybatis—sqlSession执行流程">
+                        
+                        <span class="card-title">Mybatis—sqlSession执行流程</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            sqlSession是mybatis应用程序与数据库交互的主要接口。
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-07-01
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -565,54 +568,6 @@
                     
                     <a href="/tags/mybatis/">
                         <span class="chip bg-color">mybatis</span>
-                    </a>
-                    
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="card">
-                <a href="/2024/06/05/HTTP%E5%8D%8F%E8%AE%AE%E4%B9%8B%E4%B8%8EWEB%E6%9C%8D%E5%8A%A1%E5%99%A8/">
-                    <div class="card-image">
-                        
-                        <img src="/../images/HTTP%E4%B8%8EWEB%E6%9C%8D%E5%8A%A1%E5%99%A8.jpg" class="responsive-img" alt="HTTP协议之与WEB服务器">
-                        
-                        <span class="card-title">HTTP协议之与WEB服务器</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            HTTP是Web服务器与客户端之间通信的基础协议。Web服务器能够理解和响应HTTP请求。
-                        
-                    </div>
-                    <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-06-05
-                            </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE/" class="post-category">
-                                    网络协议
-                                </a>
-                            
-                            
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/HTTP/">
-                        <span class="chip bg-color">HTTP</span>
                     </a>
                     
                 </div>

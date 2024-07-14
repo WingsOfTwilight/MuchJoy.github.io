@@ -6,7 +6,7 @@
   <link href="https://muchjoy.github.io/atom.xml" rel="self"/>
   
   <link href="https://muchjoy.github.io/"/>
-  <updated>2024-07-13T01:49:13.173Z</updated>
+  <updated>2024-07-14T14:30:54.368Z</updated>
   <id>https://muchjoy.github.io/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Mysql—Explain</title>
+    <link href="https://muchjoy.github.io/2024/07/13/Mysql%E2%80%94Explain/"/>
+    <id>https://muchjoy.github.io/2024/07/13/Mysql%E2%80%94Explain/</id>
+    <published>2024-07-13T05:14:56.000Z</published>
+    <updated>2024-07-14T14:30:54.368Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="/../images/explain.png"></p><h2 id="EXPLAIN"><a href="#EXPLAIN" class="headerlink" title="EXPLAIN"></a>EXPLAIN</h2><h3 id="table"><a href="#table" class="headerlink" title="table"></a>table</h3><blockquote><p>无论语句多么复杂，到最后也是对每个表进行单表访问。该条记录的table列代表该表的表名。</p></blockquote><h3 id="id"><a href="#id" class="headerlink" title="id"></a>id</h3><blockquote><p>1、每出现一个select关键字，都会分配一个唯一的id。但是连接查询的执行计划中，每个表都会对应以一条记录，但是这些记录的id值都是相通的。出现前面的表是驱动表，出现在后面的表是被驱动表。<br>2、UNION子句查询，id出现为空的记录，是因为需要把结果集进行去重，从而使用了临时表，id为NULL表示这个临时表是为了合并结果集创建的。</p></blockquote><h3 id="select-types"><a href="#select-types" class="headerlink" title="select_types"></a>select_types</h3><blockquote><p>1、SIMPLE : 查询语句中不包含UNION或者子查询的查询都算作SIMPLE类型,连接查询也是SIMPLE。<br>2、PRIMARY : 对于大查询来说，它是由几个小查询组成，其中最左边的那个查询的select_type值就是PRIMARY。<br>3、UNION : 对于大查询来说，它是由几个小查询组成，其中最左边的那个查询的select_type值是PRIMARY之外，其余小的查询就是UNION。<br>4、UNION RESULT : mysql选择使用临时表来完成UNION查询的去重工作，针对该临时表的查询的select_type就是UNION RESULT。<br>5、SUBQUERY : 如果包含的子查询语句不能够转为对应的半连接形式，并且该子查询是不相关子查询。而且查询优化器决定将子查询物化的方案来执行该子查询时。此时那个子查询的select_type就是SUBQUERY。<br>6、DEPENDENT SUBQUERY : 如果包含的子查询语句不能够转为对应的半连接形式，并且该子查询被查询优化器转为相关子查询的形式，此时那个子查询的select_type就是DEPENDENT SUBQUERY。<br>7、DEPENDENT UNION : 在包涵UNION或者UNION ALL的大查询中，如果各个小查询都依赖外层查询，处理最小的查询外，其他查询都是DEPENDENT UNION。<br>8、DERIVED : 在包涵派生表的查询中，如果是以物化派生表的查询方式，派生表对应的字查询的select_type就是DERIVED。<br>9、MATERIALIZED : 当查询器优化执行包含子查询的语句时，选择将子查询物化之后与外层查询进行连接查询，该子查询的select_type就是MATERIALIZED。</p></blockquote><h3 id="type"><a href="#type" class="headerlink" title="type"></a>type</h3><blockquote><p>1、system : 当表中只有一条记录并且该表使用的存储引擎（MyISAM，MEMORY）的统计数据是精确的。<br>2、const:根据主键或者唯一二级索引列与常数进行等值匹配时，对单表访问的方法就是const。<br>3、eq_ref:执行连接查询时，被驱动表是通过主键或者不允许为NULL的唯一二级索引列等值匹配的方式进行访问的。则对被驱动表的访问方法就是er_ref。<br>4、ref : 通过普通的二级索引列与常量进行等值匹配的方式来查询某个表时。<br>5、fulltext : 全文检索<br>6、ref_of_null : 对普通二级索引进行等值匹配且该索引列的值也可以是NULL值时。<br>7、index_merge : 使用索引合并的方式对某个表执行查询的。<br>8、range:使用索引获取某些单点<strong>扫描区间</strong>的记录。<br>9、index:使用索引覆盖，但需要扫描全部索引记录时。<br>10、ALL : 全表扫描</p></blockquote><h3 id="possible-keys-和-key"><a href="#possible-keys-和-key" class="headerlink" title="possible_keys 和 key"></a>possible_keys 和 key</h3><blockquote><p>possible_keys 列表示在某个查询语句中，对某个表执行单表查询时可能用的到索引；key列表示实际用到的索引。<br>⚠️ possible_keys列中的值并不是越多越好，可以使用的索引越多，查询优化器在计算查询成本时话费的时间就越长。</p></blockquote><h3 id="rows"><a href="#rows" class="headerlink" title="rows"></a>rows</h3><blockquote><p>执行计划的rows列就代表预计扫描的索引记录行数。</p></blockquote><h3 id="filtered"><a href="#filtered" class="headerlink" title="filtered"></a>filtered</h3><p>条件过滤</p><h3 id="Extra"><a href="#Extra" class="headerlink" title="Extra"></a>Extra</h3><blockquote></blockquote>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/../images/explain.png&quot;&gt;&lt;/p&gt;
+&lt;h2 id=&quot;EXPLAIN&quot;&gt;&lt;a href=&quot;#EXPLAIN&quot; class=&quot;headerlink&quot; title=&quot;EXPLAIN&quot;&gt;&lt;/a&gt;EXPLAIN&lt;/h2&gt;&lt;h3 id=&quot;tab</summary>
+      
+    
+    
+    
+    <category term="数据存储" scheme="https://muchjoy.github.io/categories/%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/"/>
+    
+    
+    <category term="mysql" scheme="https://muchjoy.github.io/tags/mysql/"/>
+    
+  </entry>
   
   <entry>
     <title>Mybatis详解四</title>

@@ -384,6 +384,16 @@
 </blockquote>
 <h3 id="filtered"><a href="#filtered" class="headerlink" title="filtered"></a>filtered</h3><p>条件过滤</p>
 <h3 id="Extra"><a href="#Extra" class="headerlink" title="Extra"></a>Extra</h3><blockquote>
+<p>1、No table used ：语句中没有from子句<br>2、Impossible WHERE：查询语句的WHERE条件永远为false时<br>3、No matching min/max row :当查询列表有MIN或MAX聚集函数时，当时并没有记录符合WHERE子句中的搜索条件时。<br>4、Using index:使用覆盖索引执行查询时。</p>
+</blockquote>
+<blockquote>
+<p>5、Using index condition:搜索条件中出现了索引列，但却不能充当边界条件来形成扫描区间。</p>
+<blockquote>
+<p>select * from s1 where key1&gt;’z’ and key1 like ‘%a’;key1字段为索引字段。执行步骤：<br>1、定位到key1&gt;’z’的第一条二级索引记录。此时不回表查询：先判断key1&gt;’z’ and key1 like ‘%a’是否成立。如果不成立直接找下一条记录。如果成立，则执行回表操作。<br>2、然后再判断其他查询条件（该例子中没有出key1之外的条件）<br>3、之后继续循环执行1，2 </p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>6、Using where:当某个搜索条件需要在server层判断。不是通过索引直接过滤，是通过where条件过滤<br>7、Using join buffer(Block Nested Loop):在连接查询时，被驱动表不能有效利用索引加快访问速度时，mysql一般会为其分配名连接缓冲区的内存快 加快查询速度。也就是基于块嵌套循环算法来执行连接查询。<br>8、Using intersect(···)，Using union(···)，Using sort_union(···) ：说明准备使用索引合并的方式查询。<br>9、Zero limit ：当limit子句的参数为0时。压根儿不打算查出数据。<br>10、Using filesort:对结果集中的记录进行排序时，是可以使用到索引的。排序在内存或者磁盘中进行的（文件排序）。<br>11、Using temporary :在执行DISTINCT，GROUP BY，UNION等子句查询时，如果不能有效的利用索引，muysql很可能通过建立内部的临时表来执行查询。<br>12、Start temporary ,End temporary:将in转化为半连接时，执行策略为Duplicate Weedout时。也就是通过建立临时表来为外层查询中的记录进行去重操作时，驱动表的查询执行计划的Extra列将显示Start temporary，被驱动表查询执行计划的Extra列将显示End temporary。<br>13、LooseScan：再将in子查询转为半连接时，如果采用的是LooseScan执行策略，则驱动表执行计划的extra列就显示LooseScan提示。<br>14、FirstMatch（tableName）再将in子查询转为半连接时，如果采用的是FirstMatch执行策略，则驱动表执行计划的extra列就显示FirstMatch（tableName）提示。</p>
 </blockquote>
 
                 

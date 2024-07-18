@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="Mysql—Explain, 欢乐多">
-    <meta name="description" content="本章主要是记录一下EXPLAIN相关的内容，查看某个查询语句的具体执行计划。">
+    <meta name="description" content="本章主要是记录一下EXPLAIN相关的内容以及InnoDB的Buffer Pool(缓冲池)。">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -364,7 +364,7 @@
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <p><img src="/../images/explain.png"></p>
-<h2 id="EXPLAIN"><a href="#EXPLAIN" class="headerlink" title="EXPLAIN"></a>EXPLAIN</h2><h3 id="table"><a href="#table" class="headerlink" title="table"></a>table</h3><blockquote>
+<h2 id="EXPLAIN-执行计划"><a href="#EXPLAIN-执行计划" class="headerlink" title="EXPLAIN(执行计划)"></a>EXPLAIN(执行计划)</h2><h3 id="table"><a href="#table" class="headerlink" title="table"></a>table</h3><blockquote>
 <p>无论语句多么复杂，到最后也是对每个表进行单表访问。该条记录的table列代表该表的表名。</p>
 </blockquote>
 <h3 id="id"><a href="#id" class="headerlink" title="id"></a>id</h3><blockquote>
@@ -404,6 +404,24 @@
 <blockquote>
 <p>12、Start temporary ,End temporary:将in转化为半连接时，执行策略为Duplicate Weedout时。也就是通过建立临时表来为外层查询中的记录进行去重操作时，驱动表的查询执行计划的Extra列将显示Start temporary，被驱动表查询执行计划的Extra列将显示End temporary。<br>13、LooseScan：再将in子查询转为半连接时，如果采用的是LooseScan执行策略，则驱动表执行计划的extra列就显示LooseScan提示。<br>14、FirstMatch（tableName）再将in子查询转为半连接时，如果采用的是FirstMatch执行策略，则驱动表执行计划的extra列就显示FirstMatch（tableName）提示。</p>
 </blockquote>
+<h2 id="Buffer-Pool-缓冲池"><a href="#Buffer-Pool-缓冲池" class="headerlink" title="Buffer Pool(缓冲池)"></a>Buffer Pool(缓冲池)</h2><p>为了缓存磁盘中的页，mysql服务器在启动的时候像操作系统申请了一片连续的内存————buffer pool。默认Buffer Pool是一个实例。可以设置innodb_buffer_pool_instances来修改Buffer Pool实例的个数。当innodb_buffer_pool_size的值小于1GB是，设置多个实例是无效的。mysql5.7.5之后，buffer pool 是有若干个chunk组成。一个chunk就代表一片连续的内存空间，里面包含了若干个缓冲页与其对应的控制块。</p>
+<h3 id="Buffer-Pool组成"><a href="#Buffer-Pool组成" class="headerlink" title="Buffer Pool组成"></a>Buffer Pool组成</h3><p>buffer pool 对应的连续的内存被划分为若干个页面，页面大小与InnoDB表空间用的页面大小一致，默认16kb。这些页面被称为缓冲页。控制信息占用的一块内存称为一个控制块。控制块与缓存页一一对应。<br><img src="/../images/BufferPoll.png"></p>
+<h3 id="free链表"><a href="#free链表" class="headerlink" title="free链表"></a>free链表</h3><p>把所有空闲的缓冲页对应的控制块作为一个节点放到一个链表中，这个链表就是free链表（空闲列表）。刚完成初始化的Buffer Pool中，所有的缓冲页都是空闲的。所有的缓冲页对应的控制块都会加入到free链表中。</p>
+<p><img src="/../images/free%E9%93%BE%E8%A1%A8.png"></p>
+<h3 id="flush链表"><a href="#flush链表" class="headerlink" title="flush链表"></a>flush链表</h3><p>当修改了Buffer Pool中的某个缓冲页的数据，它就与磁盘中的页不一致了，这样的缓冲页被称为<strong>脏页</strong>。 凡是被修改过的缓存页对应的控制块都会作为一个节点加入到链表中。这个链表中的节点对应的缓冲页都需要被刷新到磁盘中，所以也别称为<strong>flush链表</strong>。flush链表与free链表类似。</p>
+<p><strong>刷新脏页到磁盘</strong>：后台有专门的线程负责每隔一段时间就把脏页面刷新到磁盘中。</p>
+<blockquote>
+<p>1、从LRU链表中的冷数据中刷新一部分到磁盘。<br>2、从flush链中刷新一部分页面到磁盘中。</p>
+</blockquote>
+<h3 id="LRU链表"><a href="#LRU链表" class="headerlink" title="LRU链表"></a>LRU链表</h3><p>LRU链表按照一定的<strong>比例</strong>分成两截：一部分存储使用频率比较高的缓冲页，这部分链表被称为<strong>热数据</strong>；另外一部分存储使用频率不是很高的缓冲页，这部分链表也称为<strong>冷数据</strong>。<br>查看：</p>
+<blockquote>
+<p>show variables like ‘innode_old_blocks_pct’</p>
+</blockquote>
+<p>配置：</p>
+<blockquote>
+<p>set GLOBAL innodb_old_blocks_pct = 40</p>
+</blockquote>
+<p>针对LRU链表还有很多优化策略。优化的目的：尽量高效的提高Buffer Pool命中率。</p>
 
                 
             </div>
@@ -565,7 +583,7 @@
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            本章主要是记录一下EXPLAIN相关的内容，查看某个查询语句的具体执行计划。
+                            本章主要是记录一下EXPLAIN相关的内容以及InnoDB的Buffer Pool(缓冲池)。
                         
                     </div>
                     <div class="publish-info">

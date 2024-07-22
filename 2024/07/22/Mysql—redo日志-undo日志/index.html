@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Mysql—事务, 欢乐多">
-    <meta name="description" content="事务隔离级别和MVCC以及工作面试老大难————锁。">
+    <meta name="keywords" content="Mysql—redo日志&amp;undo日志, 欢乐多">
+    <meta name="description" content="redo日志和undo日志机制一起工作，确保数据库能够在各种异常情况下保持一致性和完整性。">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -17,7 +17,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Mysql—事务 | 欢乐多</title>
+    <title>Mysql—redo日志&amp;undo日志 | 欢乐多</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -293,12 +293,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/8.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/2.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Mysql—事务</h1>
+                    <h1 class="description center-align post-title">Mysql—redo日志&amp;undo日志</h1>
                 </div>
             </div>
         </div>
@@ -363,93 +363,42 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><h3 id="事务特性"><a href="#事务特性" class="headerlink" title="事务特性"></a>事务特性</h3><p>A原子性：不存在中间状态，要么全做，要么全不做。<br>I隔离性：针对某些数据库操作来说，不仅要保证操作以原子性的方式进行，而且还要保证其他的状态转换不会影响到本次状态转换。<br>C一致性：数据库自身可以保证一部分一致性需求，比如表建立主键，唯一索引等。 更多的一致性需要靠写业务代码的程序员自己保证。<br>D持久性：当一个状态转换完成后，这个妆换的结果永久保留。</p>
-<p><img src="/../images/%E4%BA%8B%E5%8A%A1%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2.png"></p>
-<h3 id="事务语法"><a href="#事务语法" class="headerlink" title="事务语法"></a>事务语法</h3><blockquote>
-<p>BEGIN[WORK] 表示开启了一个失误。WORK可有可无。</p>
+                <p><img src="/../images/%E8%AF%BB%E4%B8%80%E6%9D%A1%E8%AE%B0%E5%BD%95%E8%BF%87%E7%A8%8B.png"></p>
 <blockquote>
-<p>BEGIN;<br>加入事务的语句…</p>
+<p>undo log（回滚日志）：是 Innodb 存储引擎层生成的日志，实现了事务中的原子性，主要用于事务回滚和 MVCC。<br>redo log（重做日志）：是 Innodb 存储引擎层生成的日志，实现了事务中的持久性，主要用于掉电等故障恢复。<br>binlog （归档日志）：是 Server 层生成的日志，主要用于数据备份和主从复制。</p>
 </blockquote>
-</blockquote>
+<h2 id="undo-log"><a href="#undo-log" class="headerlink" title="undo log"></a>undo log</h2><p>undo log（回滚日志），它保证了事务的 ACID 特性 (opens new window)中的原子性（Atomicity）。undo log日志是一种用于撤回的日志。在事务没提交之前，mysql会先记录更新前的数据到undo log日志里。当事务会滚时，可以利用undo log回滚。如下图<br><img src="/../images/undo.png"></p>
+<p>在发生回滚时，就读取 undo log 里的数据，然后做原先相反操作。</p>
+<p>不同的操作，需要记录的内容也是不同的，所以不同类型的操作（修改、删除、新增）产生的 undo log 的格式也是不同的，具体的每一个操作的 undo log 的格式我就不详细介绍了，感兴趣的可以自己去查查。</p>
+<p>一条记录的每一次更新操作产生的 undo log 格式都有一个 roll_pointer 指针和一个 trx_id 事务id：</p>
 <blockquote>
-<p>START TRANSACTION与BEGIN语句有相同的功效。start transaction可以跟随几个修饰符。<br>REA ONLY：表示当前事务是一个只读事务。<br>READ WRITE: 表示当前事务是一个读写事务。<br>WITH CONSISTEND SNAPASHOT: 启动一致性读</p>
-<blockquote>
-<p>1、START TRANSACTION;<br>加入事务的语句…<br>2、START TRANSACTION READ ONLY;</p>
+<p>通过 trx_id 可以知道该记录是被哪个事务修改的；<br>通过 roll_pointer 指针可以将这些 undo log 串成一个链表，这个链表就被称为版本链；</p>
 </blockquote>
-</blockquote>
-<blockquote>
-<p>COMMIT [WORK];提交事务</p>
-<blockquote>
-<p>BEGIN;<br>加入事务的语句…<br>COMMIT;</p>
-</blockquote>
-</blockquote>
-<blockquote>
-<p>ROLLBACK [WORK];会滚事务</p>
-<blockquote>
-<p>BEGIN;<br>加入事务的语句…<br>ROLLBACK;</p>
-</blockquote>
-</blockquote>
-<blockquote>
-<p>SAVEPOINT 保存点名称</p>
-<blockquote>
-<p>1、当想回滚到某个保存点时，可以使用下面语句：<br>ROLLBACK [WORK] TO [SAVEPOINT] 保存点名称。<br>2、如果想删除某个保存点<br>RELEASE SAVEPOINT 保存点名称；</p>
-</blockquote>
-</blockquote>
-<h3 id="事务隔离级别"><a href="#事务隔离级别" class="headerlink" title="事务隔离级别"></a>事务隔离级别</h3><p>read uncommitted ：读未提交； 可能发生 <strong>脏读</strong>，<strong>不可重复度</strong>，<strong>幻读</strong><br>read committed ：读已提交；可能发生 <strong>不可重复度</strong>，<strong>幻读</strong><br>repeatable read ：可重复读；可能发生 <strong>幻读</strong><br>serializable ：序列化；上述现象都不可能发生。</p>
-<blockquote>
-<p>脏写：如果一个事务修改了另一个未提交的事物修改过的数据，就意味着发生了脏写。<br>脏读：如果一个事务读到了另一个未提交事务修改过的数据，就意味着发生了脏读。<br>不可重复度：如果一个事务修改了另一个未提交事务读区的数据，就意味着发生了不可重复度。（是在一个事务内，连续两次读取<strong>同一</strong>数据集，发现两次读取的数据内容不一致。）<br>幻读：在一个事务在读取数据时，另一事务插入或删除了数据，导致第一次读取的数据与第二次读取的数据不一致，尽管读取的<strong>条件没有改变</strong>。（条件没有变，结果集改变了）</p>
-</blockquote>
-<h3 id="MVCC原理"><a href="#MVCC原理" class="headerlink" title="MVCC原理"></a>MVCC原理</h3><p>trx_id：一个事务每次对某条<strong>聚簇索引</strong>记录进行改动时，都会吧事务的事务id赋值给trx_id隐藏列。<br>roll_pointer：每次对某条<strong>聚簇索引</strong>记录进行改动时，都会把旧版本写入undo日志中，这个隐藏列就相当于一个指针，可以通过它找到该记录修改前的信息。</p>
-<p>每次更新记录后，都会将旧值放到一条undo日志中，随着更新次数的增多，所有的版本都会被roll_pointer属性连接成一个链表，这个链表称为版本链。版本链的头节点就是当前记录的最新值。<strong>另外每个版本中还包含生成该版本时对应的事务id</strong>。之后会利用这个记录的版本链来控制并发事务访问相同记录时的行为，这种机制称为<strong>多版本并发控制 MVCC</strong>。</p>
-<p>对于read uncommitted隔离级别的事务，由于可以读到未提交事务修改过的记录，所以直接读取最新的版本记录就可以了。<br>对于serializable隔离级别的事务，使用了加锁的方式来访问记录。<br>对于read committed 和repeatable read隔离级别的事务来说，都必须保证读到已经提交的事务修改过的记录。核心的问题就是：<strong>需要判断版本链中的那个版本是当前事务可见的</strong>。InnoDB提出<strong>ReadView</strong>一致性视图的概念。</p>
-<blockquote>
-<p>1、m_ids：再生成ReadView时，当前系统中活跃的读写事务的事务id列表。<br>2、min_trx_id：在生成ReadView时，当前系统中活跃的读写事务中最小的事务id;也就是m_ids中最小的。<br>3、max_trx_id：再生成ReadView时，系统应该分配给下一个事务的事务id值。<br>4、creator_trx_id：生成该ReadView的事务的事务id。</p>
-</blockquote>
-<p>只有在对表中的记录进行改动时，才会为事务分配唯一的事务id，否则一个事务的id值都是默认为0。</p>
-<p>判断记录的某个版本是否可见：</p>
-<blockquote>
-<p>1、如果被访问版本的trx_id与ReadView中的creator_trx_id相同，就意味着事务在访问他自己修改过的记录，所以该版本是可以被当前事务访问的。<br>2、如果被访问版本的trx_id属性值小于ReadView中的min_trx_id值，表明该版本的事务在当前事务生成ReadView前已经提交，所以该版本可以被当前事务访问。<br>3、如果被访问的trx_id大于或等于ReadView中的max_trx_id，表明生成该版本的事务在当前事务生成ReadView后才开启的，所以该版本不可能被当前事务访问。<br>4、如果被访问版本的trx_id在ReadView的min_trx_id和max_trx_id之间，则需要判断trx_id是否在m_ids中，如果在，则说明创建ReadView时生成的该本本的事务还是活跃的，该版本不可以被访问；如果不在，就说明创建ReadView时生成该版本的事务已经被提交，该版本可以被访问。</p>
-</blockquote>
-<p>read committed 每次读取数据前都生成一个ReadView。<br>repeatable read 在第一次读取数据时生成一个readView。</p>
-<h3 id="二级索引与MVCC"><a href="#二级索引与MVCC" class="headerlink" title="二级索引与MVCC"></a>二级索引与MVCC</h3><p>只有聚簇索引中才有trx_id和roll_pointer隐藏列。二级索引如何判断可见性呢？</p>
-<blockquote>
-<p>步骤1、二级索引页面的page header部分有一个PAGE_MAX_TRX_ID属性，每当对该页面中的记录执行增删改操作时，如果执行该操作的事务的事务id大于PAGE_MAX_TRX_ID属性值，就会吧page_max_trx_id属性设置为执行该操作的事务的事务id。这就意味着page_max_trx_id的属性值就代表修改二级索引页面的最大事务id是什么，之后，就可以判断赌赢的ReadView的min_trx_id是否大于该页面的page_max_trx_id的值，如果是，则页面中所有记录可见。否则执行步骤二，再回表之后再判断。<br>步骤2、利用二级索引记录中的主键值进行回表操作，得到对应的聚簇索引记录之后在按照前面的方式找到对应的ReadView可见的第一个版本。然后判断该版本中相应的二级索引的值是否与利用该二级索引查询时的值相同。如果是就把记录发送给客户端，如果不是，就跳过该记录。</p>
-</blockquote>
-<h2 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h2><p>并发事务访问相同记录的情况大致可以划分为3种：<br>1、读-读，本身对记录没有影响。所以允许发生这种情况。<br>2、写-写，并发事务相继对相同的记录进行改动。<br>3、写-读，读-写：也就是说一个事务进行读取操作，另一个事务进行改动操作。</p>
-<h3 id="锁定读"><a href="#锁定读" class="headerlink" title="锁定读"></a>锁定读</h3><p><strong>共享锁和独占锁</strong><br>共享锁：简称S锁，在事务要读取一条记录时，需要先获取该记录的S锁。<br>独占锁：也称为排它锁，简称X锁，在事务要改动一条记录时，需要先获取该记录的X锁。</p>
-<p>S锁和S锁是兼容的，S锁和X锁是不兼容的，X锁和X锁是不是兼容的。</p>
-<blockquote>
-<p>对读取的记录加S锁：select * from table lock in share mode;<br>对读取的记录加X锁：select * from table for update;</p>
-</blockquote>
-<h3 id="写操作"><a href="#写操作" class="headerlink" title="写操作"></a>写操作</h3><p>平常所用到的写操作无非是DELETE，UPDATE，INSERT这3种。</p>
-<blockquote>
-<p>DELETE：对一条记录进行DELETE操作的过程就是先在B+树中定位到这条记录的位置，然后获取这条记录的X锁，最后在执行delete mark操作。</p>
-</blockquote>
-<blockquote>
-<p>UPDATE：对一条记录进行UPDATE操作时分为下面3种情况。</p>
-<blockquote>
-<p>1、如果未修改该记录的键值 并且被更新的列所占用的存储空间在修改前后未发生变化，则，现在B+树中定位到这条记录的位置，然后获取记录的X锁，最后再原记录的位置进行修改操作。<br>2、如果未修改该记录的键值 并且至少有一个被更新的列占用的存储空间在修改前后发生变化，则先在B+树中定位到这条记录的位置，然后获取记录的X锁，之后将该记录彻底删除掉（把记录彻底移入垃圾链表）最后插入一条新记录。<br>3、如果修改了该记录的键值，则相当于在原记录上执行力DELETE操作之后再进行一次INSERT操作，加锁操作就需要按照DELETE和INSERT的规则进行了。</p>
-</blockquote>
-</blockquote>
-<blockquote>
-<p>INSERT：一般情况下，新插入一条记录受隐式锁保护，不需要在内存中为其生成对应的锁结构。</p>
-</blockquote>
-<h3 id="InnoDb的行级锁"><a href="#InnoDb的行级锁" class="headerlink" title="InnoDb的行级锁"></a>InnoDb的行级锁</h3><p><strong>1、Record Lock</strong> ：记录锁，官方命名：LOCK_REC_NOT_GAP,这种记录锁有S型和X型之分。<br><strong>2、Gap Lock</strong> ：在Repeatable read隔离级别下可以很大程度上解决幻读现象，解决方案有2种：1、使用MVCC方案解决；2、使用加锁方案解决。</p>
-<blockquote>
-<p>但是使用加锁方案解决时有个大问题，就是事务在第一次执行读取操作时，那些幻影记录尚不存在，无法给这些记录加上记录锁。所以InnoDB提出了Gap Lock锁。</p>
-</blockquote>
-<p><strong>间隙锁是指锁住一个索引记录的前间隙，而不是锁住具体的索引记录。间隙锁的目的是防止其他事务在该间隙内插入新的记录，从而避免幻读现象。</strong></p>
-<p>gap锁的提出仅仅是为了防止插入幻影记录而提出的。</p>
-<p><strong>对于最后一条记录之后的间隙</strong> 给那条记录加gap锁才能阻止其他事物在（8，+∞）插入新的记录呢？为了阻止其他事物在（8，+∞）区间插入记录，可以给最后一条记录所在的页面的supremum记录加上一个gap锁。</p>
-<p><strong>3、Next-Key Lock</strong> ：既想锁住某条记录，又想阻止其他事务在该记录前面的间隙加入新的记录。本质就是一个Record锁+gap锁组合体。</p>
-<blockquote>
-<p>Insert Intention Lock，一个事务在插入一条记录时，需要判断插入位置是否已经被别的事物加入了gap锁。如果有，插入操作需要等待，直到拥有gap锁的那个事务提交为止。事务在等待时也需要在内存中生成一个锁接口，表明有事务想在某个间隙插入新记录，但是现在处于等待状态。这种类型的锁为Insert Intention Lock，也被称为插入意向锁。</p>
-</blockquote>
-<h3 id="锁定读的语句"><a href="#锁定读的语句" class="headerlink" title="锁定读的语句"></a>锁定读的语句</h3><blockquote>
-<p>1、语句1:select …… LOCK IN SHARE MODE;<br>2、语句2:select …… for update;<br>3、语句3:update ……<br>4、语句4:delete ……</p>
-</blockquote>
-<p>语句1和语句2是mysql中规定的2中锁定读的语法格式，而语句3和语句4由于在执行过程中需要首先定位到被改动的记录并给记录加锁，也可以认为一种锁定读。</p>
-<p><strong>匹配模式</strong>：执行查询时，查询优化器会生成若干个扫描区间。在扫描区间内快速定位到第一条记录。然后沿着这条记录所在的单项链表可以访问到其他数据。<br><strong>唯一性搜索</strong>：如果在扫描某个扫描区间的记录前，就能事先确定该扫描区间内最多只包含一条记录的话，那么就把这种情况称为唯一性搜索。</p>
+<p>undo log 还有一个作用，通过 ReadView + undo log 实现 MVCC（多版本并发控制）。</p>
+<h2 id="redo-log"><a href="#redo-log" class="headerlink" title="redo log"></a>redo log</h2><p>前面讲到过Buffer Pool，提高了读写效率。但是问题来了，Buffer Pool 是基于内存的，而内存总是不可靠，万一断电重启，还没来得及落盘的脏页数据就会丢失。</p>
+<h3 id="为什么需要redo-log"><a href="#为什么需要redo-log" class="headerlink" title="为什么需要redo log?"></a>为什么需要redo log?</h3><p>为了防止断电导致数据丢失的问题，当有一条记录需要更新的时候，InnoDB 引擎就会先更新内存（同时标记为脏页），然后将本次对这个页的修改以 redo log 的形式记录下来，这个时候更新就算完成了。</p>
+<p>后续，InnoDB 引擎会在适当的时候，由后台线程将缓存在 Buffer Pool 的脏页刷新到磁盘里，这就是** WAL （Write-Ahead Logging）**技术。</p>
+<p>WAL 技术指的是， MySQL 的写操作并不是立刻写到磁盘上，而是先写日志，然后在合适的时间再写到磁盘上。</p>
+<p><img src="/../images/redo.png"></p>
+<p>开启事务后，InnoDB 层更新记录前，首先要记录相应的 undo log，如果是更新操作，需要把被更新的列的旧值记下来，也就是要生成一条 undo log，undo log 会写入 Buffer Pool 中的 Undo 页面。</p>
+<p><strong>不过，在内存修改该 Undo 页面后，需要记录对应的 redo log。</strong></p>
+<p><strong>redo log 记录了此次事务「完成后」的数据状态，记录的是更新之后的值；</strong><br><strong>undo log 记录了此次事务「开始前」的数据状态，记录的是更新之前的值；</strong></p>
+<p>事务提交之前发生了崩溃，重启后会通过 undo log 回滚事务，事务提交之后发生了崩溃，重启后会通过 redo log 恢复事务，如下图：<br><img src="/../images/%E4%BA%8B%E5%8A%A1%E6%8F%90%E4%BA%A4%E5%89%8D%E5%90%8E.png"></p>
+<p>所以有了 redo log，再通过 WAL 技术，InnoDB 就可以保证即使数据库发生异常重启，之前已提交的记录都不会丢失，这个能力称为 <strong>crash-safe（崩溃恢复）</strong>。可以看出来， redo log 保证了事务四大特性中的<strong>持久性</strong>。</p>
+<p>写入 redo log 的方式使用了追加操作， 所以磁盘操作是顺序写，而写入数据需要先找到写入位置，然后才写到磁盘，所以磁盘操作是随机写。</p>
+<p>磁盘的「顺序写 」比「随机写」 高效的多，因此 redo log 写入磁盘的开销更小。</p>
+<p>实际上， 执行一个事务的过程中，产生的 redo log 也不是直接写入磁盘的，因为这样会产生大量的 I/O 操作，而且磁盘的运行速度远慢于内存。</p>
+<p>所以，redo log 也有自己的缓存—— redo log buffer，每当产生一条 redo log 时，会先写入到 redo log buffer，后续在持久化到磁盘。</p>
+<h3 id="为什么需要两阶段提交？"><a href="#为什么需要两阶段提交？" class="headerlink" title="为什么需要两阶段提交？"></a>为什么需要两阶段提交？</h3><p>事务提交后，redo log 和 binlog 都要持久化到磁盘，但是这两个是独立的逻辑，可能出现<strong>半成功的状态</strong>，这样就造成两份日志之间的逻辑不一致。</p>
+<p>举个例子，假设 id = 1 这行数据的字段 name 的值原本是 ‘jay’，然后执行 UPDATE t_user SET name = ‘xiaolin’ WHERE id = 1; 如果在持久化 redo log 和 binlog 两个日志的过程中，出现了半成功状态，那么就有两种情况：</p>
+<p>1、<strong>如果在将 redo log 刷入到磁盘之后， MySQL 突然宕机了，而 binlog 还没有来得及写入</strong>。MySQL 重启后，通过 redo log 能将 Buffer Pool 中 id = 1 这行数据的 name 字段恢复到新值 xiaolin，但是 binlog 里面没有记录这条更新语句，在主从架构中，binlog 会被复制到从库，由于 binlog 丢失了这条更新语句，从库的这一行 name 字段是旧值 jay，与主库的值不一致性；<br>2、<strong>如果在将 binlog 刷入到磁盘之后， MySQL 突然宕机了，而 redo log 还没有来得及写入</strong>。由于 redo log 还没写，崩溃恢复以后这个事务无效，所以 id = 1 这行数据的 name 字段还是旧值 jay，而 binlog 里面记录了这条更新语句，在主从架构中，binlog 会被复制到从库，从库执行了这条更新语句，那么这一行 name 字段是新值 xiaolin，与主库的值不一致性；</p>
+<p>可以看到，在持久化 redo log 和 binlog 这两份日志的时候，如果出现半成功的状态，就会造成主从环境的数据不一致性。这是因为 redo log 影响主库的数据，binlog 影响从库的数据，所以 redo log 和 binlog 必须保持一致才能保证主从数据一致。</p>
+<p><strong>MySQL 为了避免出现两份日志之间的逻辑不一致的问题，使用了「两阶段提交」来解决</strong>。两阶段提交其实是分布式事务一致性协议，它可以保证多个逻辑操作要不全部成功，要不全部失败，不会出现半成功的状态。</p>
+<p><strong>两阶段提交把单个事务的提交拆分成了 2 个阶段，分别是「准备（Prepare）阶段」和「提交（Commit）阶段」</strong>。</p>
+<p>当客户端执行 commit 语句或者在自动提交的情况下，MySQL 内部开启一个 XA 事务，<strong>分两阶段来完成 XA 事务的提交</strong>，如下图：<br><img src="/../images/%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4.png"></p>
+<p>从图中可看出，事务的提交过程有两个阶段，就是<strong>将 redo log 的写入拆成了两个步骤：prepare 和 commit，中间再穿插写入binlog</strong>,具体如下：</p>
+<p>1、<strong>prepare 阶段</strong>：将 XID（内部 XA 事务的 ID） 写入到 redo log，同时将 redo log 对应的事务状态设置为 prepare，然后将 redo log 持久化到磁盘（innodb_flush_log_at_trx_commit = 1 的作用）；</p>
+<p>2、<strong>commit 阶段</strong>：把 XID 写入到 binlog，然后将 binlog 持久化到磁盘（sync_binlog = 1 的作用），接着调用引擎的提交事务接口，将 redo log 状态设置为 commit，此时该状态并不需要持久化到磁盘，只需要 write 到文件系统的 page cache 中就够了，因为只要 binlog 写磁盘成功，就算 redo log 的状态还是 prepare 也没有关系，一样会被认为事务已经执行成功；</p>
 
                 
             </div>
@@ -476,7 +425,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://MuchJoy.github.io/2024/07/22/Mysql%E2%80%94%E4%BA%8B%E5%8A%A1/">https://MuchJoy.github.io/2024/07/22/Mysql%E2%80%94%E4%BA%8B%E5%8A%A1/</a>
+                    <a href="https://MuchJoy.github.io/2024/07/22/Mysql%E2%80%94redo%E6%97%A5%E5%BF%97-undo%E6%97%A5%E5%BF%97/">https://MuchJoy.github.io/2024/07/22/Mysql%E2%80%94redo%E6%97%A5%E5%BF%97-undo%E6%97%A5%E5%BF%97/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -594,9 +543,10 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
                 <a href="/2024/07/22/Mysql%E2%80%94redo%E6%97%A5%E5%BF%97-undo%E6%97%A5%E5%BF%97/">
                     <div class="card-image">
@@ -614,9 +564,9 @@
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2024-07-22
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-07-22
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -629,6 +579,7 @@
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
@@ -647,24 +598,24 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2024/07/13/Mysql%E2%80%94Explain/">
+                <a href="/2024/07/22/Mysql%E2%80%94%E4%BA%8B%E5%8A%A1/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/3.jpg" class="responsive-img" alt="Mysql—Explain">
+                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="Mysql—事务">
                         
-                        <span class="card-title">Mysql—Explain</span>
+                        <span class="card-title">Mysql—事务</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            本章主要是记录一下EXPLAIN相关的内容以及InnoDB的Buffer Pool(缓冲池)。
+                            事务隔离级别和MVCC以及工作面试老大难————锁。
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-07-13
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-07-22
                             </span>
                         <span class="publish-author">
                             

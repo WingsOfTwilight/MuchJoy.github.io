@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Mysql—Explain, 欢乐多">
-    <meta name="description" content="本章主要是记录一下EXPLAIN相关的内容以及InnoDB的Buffer Pool(缓冲池)。">
+    <meta name="keywords" content="Mysql—事务, 欢乐多">
+    <meta name="description" content="事务隔离级别和MVCC以及工作面试老大难————锁。">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -17,7 +17,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Mysql—Explain | 欢乐多</title>
+    <title>Mysql—事务 | 欢乐多</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -293,12 +293,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/3.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/8.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Mysql—Explain</h1>
+                    <h1 class="description center-align post-title">Mysql—事务</h1>
                 </div>
             </div>
         </div>
@@ -363,65 +363,93 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p><img src="/../images/explain.png"></p>
-<h2 id="EXPLAIN-执行计划"><a href="#EXPLAIN-执行计划" class="headerlink" title="EXPLAIN(执行计划)"></a>EXPLAIN(执行计划)</h2><h3 id="table"><a href="#table" class="headerlink" title="table"></a>table</h3><blockquote>
-<p>无论语句多么复杂，到最后也是对每个表进行单表访问。该条记录的table列代表该表的表名。</p>
-</blockquote>
-<h3 id="id"><a href="#id" class="headerlink" title="id"></a>id</h3><blockquote>
-<p>1、每出现一个select关键字，都会分配一个唯一的id。但是连接查询的执行计划中，每个表都会对应以一条记录，但是这些记录的id值都是相通的。出现前面的表是驱动表，出现在后面的表是被驱动表。<br>2、UNION子句查询，id出现为空的记录，是因为需要把结果集进行去重，从而使用了临时表，id为NULL表示这个临时表是为了合并结果集创建的。</p>
-</blockquote>
-<h3 id="select-types"><a href="#select-types" class="headerlink" title="select_types"></a>select_types</h3><blockquote>
-<p>1、SIMPLE : 查询语句中不包含UNION或者子查询的查询都算作SIMPLE类型,连接查询也是SIMPLE。<br>2、PRIMARY : 对于大查询来说，它是由几个小查询组成，其中最左边的那个查询的select_type值就是PRIMARY。<br>3、UNION : 对于大查询来说，它是由几个小查询组成，其中最左边的那个查询的select_type值是PRIMARY之外，其余小的查询就是UNION。<br>4、UNION RESULT : mysql选择使用临时表来完成UNION查询的去重工作，针对该临时表的查询的select_type就是UNION RESULT。<br>5、SUBQUERY : 如果包含的子查询语句不能够转为对应的半连接形式，并且该子查询是不相关子查询。而且查询优化器决定将子查询物化的方案来执行该子查询时。此时那个子查询的select_type就是SUBQUERY。<br>6、DEPENDENT SUBQUERY : 如果包含的子查询语句不能够转为对应的半连接形式，并且该子查询被查询优化器转为相关子查询的形式，此时那个子查询的select_type就是DEPENDENT SUBQUERY。<br>7、DEPENDENT UNION : 在包涵UNION或者UNION ALL的大查询中，如果各个小查询都依赖外层查询，处理最小的查询外，其他查询都是DEPENDENT UNION。<br>8、DERIVED : 在包涵派生表的查询中，如果是以物化派生表的查询方式，派生表对应的字查询的select_type就是DERIVED。<br>9、MATERIALIZED : 当查询器优化执行包含子查询的语句时，选择将子查询物化之后与外层查询进行连接查询，该子查询的select_type就是MATERIALIZED。</p>
-</blockquote>
-<h3 id="type"><a href="#type" class="headerlink" title="type"></a>type</h3><blockquote>
-<p>1、system : 当表中只有一条记录并且该表使用的存储引擎（MyISAM，MEMORY）的统计数据是精确的。<br>2、const:根据主键或者唯一二级索引列与常数进行等值匹配时，对单表访问的方法就是const。<br>3、eq_ref:执行连接查询时，被驱动表是通过主键或者不允许为NULL的唯一二级索引列等值匹配的方式进行访问的。则对被驱动表的访问方法就是er_ref。<br>4、ref : 通过普通的二级索引列与常量进行等值匹配的方式来查询某个表时。<br>5、fulltext : 全文检索<br>6、ref_of_null : 对普通二级索引进行等值匹配且该索引列的值也可以是NULL值时。<br>7、index_merge : 使用索引合并的方式对某个表执行查询的。<br>8、range:使用索引获取某些单点<strong>扫描区间</strong>的记录。<br>9、index:使用索引覆盖，但需要扫描全部索引记录时。<br>10、ALL : 全表扫描</p>
-</blockquote>
-<h3 id="possible-keys-和-key"><a href="#possible-keys-和-key" class="headerlink" title="possible_keys 和 key"></a>possible_keys 和 key</h3><blockquote>
-<p>possible_keys 列表示在某个查询语句中，对某个表执行单表查询时可能用的到索引；key列表示实际用到的索引。<br>⚠️ possible_keys列中的值并不是越多越好，可以使用的索引越多，查询优化器在计算查询成本时话费的时间就越长。</p>
-</blockquote>
-<h3 id="rows"><a href="#rows" class="headerlink" title="rows"></a>rows</h3><blockquote>
-<p>执行计划的rows列就代表预计扫描的索引记录行数。</p>
-</blockquote>
-<h3 id="filtered"><a href="#filtered" class="headerlink" title="filtered"></a>filtered</h3><p>条件过滤</p>
-<h3 id="Extra"><a href="#Extra" class="headerlink" title="Extra"></a>Extra</h3><blockquote>
-<p>1、No table used ：语句中没有from子句<br>2、Impossible WHERE：查询语句的WHERE条件永远为false时<br>3、No matching min/max row :当查询列表有MIN或MAX聚集函数时，当时并没有记录符合WHERE子句中的搜索条件时。<br>4、Using index:使用覆盖索引执行查询时。</p>
-</blockquote>
+                <h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><h3 id="事务特性"><a href="#事务特性" class="headerlink" title="事务特性"></a>事务特性</h3><p>A原子性：不存在中间状态，要么全做，要么全不做。<br>I隔离性：针对某些数据库操作来说，不仅要保证操作以原子性的方式进行，而且还要保证其他的状态转换不会影响到本次状态转换。<br>C一致性：数据库自身可以保证一部分一致性需求，比如表建立主键，唯一索引等。 更多的一致性需要靠写业务代码的程序员自己保证。<br>D持久性：当一个状态转换完成后，这个妆换的结果永久保留。</p>
+<p><img src="/../images/%E4%BA%8B%E5%8A%A1%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2.png"></p>
+<h3 id="事务语法"><a href="#事务语法" class="headerlink" title="事务语法"></a>事务语法</h3><blockquote>
+<p>BEGIN[WORK] 表示开启了一个失误。WORK可有可无。</p>
 <blockquote>
-<p>5、Using index condition:搜索条件中出现了索引列，但却不能充当边界条件来形成扫描区间。</p>
-<blockquote>
-<p>select * from s1 where key1&gt;’z’ and key1 like ‘%a’;key1字段为索引字段。执行步骤：<br>1、定位到key1&gt;’z’的第一条二级索引记录。此时不回表查询：先判断key1&gt;’z’ and key1 like ‘%a’是否成立。如果不成立直接找下一条记录。如果成立，则执行回表操作。<br>2、然后再判断其他查询条件（该例子中没有出key1之外的条件）<br>3、之后继续循环执行1，2 </p>
+<p>BEGIN;<br>加入事务的语句…</p>
 </blockquote>
 </blockquote>
 <blockquote>
-<p>6、Using where:当某个搜索条件需要在server层判断。不是通过索引直接过滤，是通过where条件过滤<br>7、Using join buffer(Block Nested Loop):在连接查询时，被驱动表不能有效利用索引加快访问速度时，mysql一般会为其分配名连接缓冲区的内存快 加快查询速度。也就是基于块嵌套循环算法来执行连接查询。<br>8、Using intersect(···)，Using union(···)，Using sort_union(···) ：说明准备使用索引合并的方式查询。<br>9、Zero limit ：当limit子句的参数为0时。压根儿不打算查出数据。<br>10、Using filesort:对结果集中的记录进行排序时，是可以使用到索引的。排序在内存或者磁盘中进行的（文件排序）。</p>
-</blockquote>
+<p>START TRANSACTION与BEGIN语句有相同的功效。start transaction可以跟随几个修饰符。<br>REA ONLY：表示当前事务是一个只读事务。<br>READ WRITE: 表示当前事务是一个读写事务。<br>WITH CONSISTEND SNAPASHOT: 启动一致性读</p>
 <blockquote>
-<p>11、Using temporary :在执行DISTINCT，GROUP BY，UNION等子句查询时，如果不能有效的利用索引，muysql很可能通过建立内部的临时表来执行查询。GROUP BY</p>
-<blockquote>
-<p>GROUP BY会默认进行order by操作，如果不使用默认的可以 order by NULL<br>select common_field,count(*) as amount from s1 group by common_field order by null</p>
+<p>1、START TRANSACTION;<br>加入事务的语句…<br>2、START TRANSACTION READ ONLY;</p>
 </blockquote>
 </blockquote>
 <blockquote>
-<p>12、Start temporary ,End temporary:将in转化为半连接时，执行策略为Duplicate Weedout时。也就是通过建立临时表来为外层查询中的记录进行去重操作时，驱动表的查询执行计划的Extra列将显示Start temporary，被驱动表查询执行计划的Extra列将显示End temporary。<br>13、LooseScan：再将in子查询转为半连接时，如果采用的是LooseScan执行策略，则驱动表执行计划的extra列就显示LooseScan提示。<br>14、FirstMatch（tableName）再将in子查询转为半连接时，如果采用的是FirstMatch执行策略，则驱动表执行计划的extra列就显示FirstMatch（tableName）提示。</p>
-</blockquote>
-<h2 id="Buffer-Pool-缓冲池"><a href="#Buffer-Pool-缓冲池" class="headerlink" title="Buffer Pool(缓冲池)"></a>Buffer Pool(缓冲池)</h2><p>为了缓存磁盘中的页，mysql服务器在启动的时候像操作系统申请了一片连续的内存————buffer pool。默认Buffer Pool是一个实例。可以设置innodb_buffer_pool_instances来修改Buffer Pool实例的个数。当innodb_buffer_pool_size的值小于1GB是，设置多个实例是无效的。mysql5.7.5之后，buffer pool 是有若干个chunk组成。一个chunk就代表一片连续的内存空间，里面包含了若干个缓冲页与其对应的控制块。</p>
-<h3 id="Buffer-Pool组成"><a href="#Buffer-Pool组成" class="headerlink" title="Buffer Pool组成"></a>Buffer Pool组成</h3><p>buffer pool 对应的连续的内存被划分为若干个页面，页面大小与InnoDB表空间用的页面大小一致，默认16kb。这些页面被称为缓冲页。控制信息占用的一块内存称为一个控制块。控制块与缓存页一一对应。<br><img src="/../images/BufferPoll.png"></p>
-<h3 id="free链表"><a href="#free链表" class="headerlink" title="free链表"></a>free链表</h3><p>把所有空闲的缓冲页对应的控制块作为一个节点放到一个链表中，这个链表就是free链表（空闲列表）。刚完成初始化的Buffer Pool中，所有的缓冲页都是空闲的。所有的缓冲页对应的控制块都会加入到free链表中。</p>
-<p><img src="/../images/free%E9%93%BE%E8%A1%A8.png"></p>
-<h3 id="flush链表"><a href="#flush链表" class="headerlink" title="flush链表"></a>flush链表</h3><p>当修改了Buffer Pool中的某个缓冲页的数据，它就与磁盘中的页不一致了，这样的缓冲页被称为<strong>脏页</strong>。 凡是被修改过的缓存页对应的控制块都会作为一个节点加入到链表中。这个链表中的节点对应的缓冲页都需要被刷新到磁盘中，所以也别称为<strong>flush链表</strong>。flush链表与free链表类似。</p>
-<p><strong>刷新脏页到磁盘</strong>：后台有专门的线程负责每隔一段时间就把脏页面刷新到磁盘中。</p>
+<p>COMMIT [WORK];提交事务</p>
 <blockquote>
-<p>1、从LRU链表中的冷数据中刷新一部分到磁盘。<br>2、从flush链中刷新一部分页面到磁盘中。</p>
+<p>BEGIN;<br>加入事务的语句…<br>COMMIT;</p>
 </blockquote>
-<h3 id="LRU链表"><a href="#LRU链表" class="headerlink" title="LRU链表"></a>LRU链表</h3><p>LRU链表按照一定的<strong>比例</strong>分成两截：一部分存储使用频率比较高的缓冲页，这部分链表被称为<strong>热数据</strong>；另外一部分存储使用频率不是很高的缓冲页，这部分链表也称为<strong>冷数据</strong>。<br>查看：</p>
+</blockquote>
 <blockquote>
-<p>show variables like ‘innode_old_blocks_pct’</p>
-</blockquote>
-<p>配置：</p>
+<p>ROLLBACK [WORK];会滚事务</p>
 <blockquote>
-<p>set GLOBAL innodb_old_blocks_pct = 40</p>
+<p>BEGIN;<br>加入事务的语句…<br>ROLLBACK;</p>
 </blockquote>
-<p>针对LRU链表还有很多优化策略。优化的目的：尽量高效的提高Buffer Pool命中率。</p>
+</blockquote>
+<blockquote>
+<p>SAVEPOINT 保存点名称</p>
+<blockquote>
+<p>1、当想回滚到某个保存点时，可以使用下面语句：<br>ROLLBACK [WORK] TO [SAVEPOINT] 保存点名称。<br>2、如果想删除某个保存点<br>RELEASE SAVEPOINT 保存点名称；</p>
+</blockquote>
+</blockquote>
+<h3 id="事务隔离级别"><a href="#事务隔离级别" class="headerlink" title="事务隔离级别"></a>事务隔离级别</h3><p>read uncommitted ：读未提交； 可能发生 <strong>脏读</strong>，<strong>不可重复度</strong>，<strong>幻读</strong><br>read committed ：读已提交；可能发生 <strong>不可重复度</strong>，<strong>幻读</strong><br>repeatable read ：可重复读；可能发生 <strong>幻读</strong><br>serializable ：序列化；上述现象都不可能发生。</p>
+<blockquote>
+<p>脏写：如果一个事务修改了另一个未提交的事物修改过的数据，就意味着发生了脏写。<br>脏读：如果一个事务读到了另一个未提交事务修改过的数据，就意味着发生了脏读。<br>不可重复度：如果一个事务修改了另一个未提交事务读区的数据，就意味着发生了不可重复度。（是在一个事务内，连续两次读取<strong>同一</strong>数据集，发现两次读取的数据内容不一致。）<br>幻读：在一个事务在读取数据时，另一事务插入或删除了数据，导致第一次读取的数据与第二次读取的数据不一致，尽管读取的<strong>条件没有改变</strong>。（条件没有变，结果集改变了）</p>
+</blockquote>
+<h3 id="MVCC原理"><a href="#MVCC原理" class="headerlink" title="MVCC原理"></a>MVCC原理</h3><p>trx_id：一个事务每次对某条<strong>聚簇索引</strong>记录进行改动时，都会吧事务的事务id赋值给trx_id隐藏列。<br>roll_pointer：每次对某条<strong>聚簇索引</strong>记录进行改动时，都会把旧版本写入undo日志中，这个隐藏列就相当于一个指针，可以通过它找到该记录修改前的信息。</p>
+<p>每次更新记录后，都会将旧值放到一条undo日志中，随着更新次数的增多，所有的版本都会被roll_pointer属性连接成一个链表，这个链表称为版本链。版本链的头节点就是当前记录的最新值。<strong>另外每个版本中还包含生成该版本时对应的事务id</strong>。之后会利用这个记录的版本链来控制并发事务访问相同记录时的行为，这种机制称为<strong>多版本并发控制 MVCC</strong>。</p>
+<p>对于read uncommitted隔离级别的事务，由于可以读到未提交事务修改过的记录，所以直接读取最新的版本记录就可以了。<br>对于serializable隔离级别的事务，使用了加锁的方式来访问记录。<br>对于read committed 和repeatable read隔离级别的事务来说，都必须保证读到已经提交的事务修改过的记录。核心的问题就是：<strong>需要判断版本链中的那个版本是当前事务可见的</strong>。InnoDB提出<strong>ReadView</strong>一致性视图的概念。</p>
+<blockquote>
+<p>1、m_ids：再生成ReadView时，当前系统中活跃的读写事务的事务id列表。<br>2、min_trx_id：在生成ReadView时，当前系统中活跃的读写事务中最小的事务id;也就是m_ids中最小的。<br>3、max_trx_id：再生成ReadView时，系统应该分配给下一个事务的事务id值。<br>4、creator_trx_id：生成该ReadView的事务的事务id。</p>
+</blockquote>
+<p>只有在对表中的记录进行改动时，才会为事务分配唯一的事务id，否则一个事务的id值都是默认为0。</p>
+<p>判断记录的某个版本是否可见：</p>
+<blockquote>
+<p>1、如果被访问版本的trx_id与ReadView中的creator_trx_id相同，就意味着事务在访问他自己修改过的记录，所以该版本是可以被当前事务访问的。<br>2、如果被访问版本的trx_id属性值小于ReadView中的min_trx_id值，表明该版本的事务在当前事务生成ReadView前已经提交，所以该版本可以被当前事务访问。<br>3、如果被访问的trx_id大于或等于ReadView中的max_trx_id，表明生成该版本的事务在当前事务生成ReadView后才开启的，所以该版本不可能被当前事务访问。<br>4、如果被访问版本的trx_id在ReadView的min_trx_id和max_trx_id之间，则需要判断trx_id是否在m_ids中，如果在，则说明创建ReadView时生成的该本本的事务还是活跃的，该版本不可以被访问；如果不在，就说明创建ReadView时生成该版本的事务已经被提交，该版本可以被访问。</p>
+</blockquote>
+<p>read committed 每次读取数据前都生成一个ReadView。<br>repeatable read 在第一次读取数据时生成一个readView。</p>
+<h3 id="二级索引与MVCC"><a href="#二级索引与MVCC" class="headerlink" title="二级索引与MVCC"></a>二级索引与MVCC</h3><p>只有聚簇索引中才有trx_id和roll_pointer隐藏列。二级索引如何判断可见性呢？</p>
+<blockquote>
+<p>步骤1、二级索引页面的page header部分有一个PAGE_MAX_TRX_ID属性，每当对该页面中的记录执行增删改操作时，如果执行该操作的事务的事务id大于PAGE_MAX_TRX_ID属性值，就会吧page_max_trx_id属性设置为执行该操作的事务的事务id。这就意味着page_max_trx_id的属性值就代表修改二级索引页面的最大事务id是什么，之后，就可以判断赌赢的ReadView的min_trx_id是否大于该页面的page_max_trx_id的值，如果是，则页面中所有记录可见。否则执行步骤二，再回表之后再判断。<br>步骤2、利用二级索引记录中的主键值进行回表操作，得到对应的聚簇索引记录之后在按照前面的方式找到对应的ReadView可见的第一个版本。然后判断该版本中相应的二级索引的值是否与利用该二级索引查询时的值相同。如果是就把记录发送给客户端，如果不是，就跳过该记录。</p>
+</blockquote>
+<h2 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h2><p>并发事务访问相同记录的情况大致可以划分为3种：<br>1、读-读，本身对记录没有影响。所以允许发生这种情况。<br>2、写-写，并发事务相继对相同的记录进行改动。<br>3、写-读，读-写：也就是说一个事务进行读取操作，另一个事务进行改动操作。</p>
+<h3 id="锁定读"><a href="#锁定读" class="headerlink" title="锁定读"></a>锁定读</h3><p><strong>共享锁和独占锁</strong><br>共享锁：简称S锁，在事务要读取一条记录时，需要先获取该记录的S锁。<br>独占锁：也称为排它锁，简称X锁，在事务要改动一条记录时，需要先获取该记录的X锁。</p>
+<p>S锁和S锁是兼容的，S锁和X锁是不兼容的，X锁和X锁是不是兼容的。</p>
+<blockquote>
+<p>对读取的记录加S锁：select * from table lock in share mode;<br>对读取的记录加X锁：select * from table for update;</p>
+</blockquote>
+<h3 id="写操作"><a href="#写操作" class="headerlink" title="写操作"></a>写操作</h3><p>平常所用到的写操作无非是DELETE，UPDATE，INSERT这3种。</p>
+<blockquote>
+<p>DELETE：对一条记录进行DELETE操作的过程就是先在B+树中定位到这条记录的位置，然后获取这条记录的X锁，最后在执行delete mark操作。</p>
+</blockquote>
+<blockquote>
+<p>UPDATE：对一条记录进行UPDATE操作时分为下面3种情况。</p>
+<blockquote>
+<p>1、如果未修改该记录的键值 并且被更新的列所占用的存储空间在修改前后未发生变化，则，现在B+树中定位到这条记录的位置，然后获取记录的X锁，最后再原记录的位置进行修改操作。<br>2、如果未修改该记录的键值 并且至少有一个被更新的列占用的存储空间在修改前后发生变化，则先在B+树中定位到这条记录的位置，然后获取记录的X锁，之后将该记录彻底删除掉（把记录彻底移入垃圾链表）最后插入一条新记录。<br>3、如果修改了该记录的键值，则相当于在原记录上执行力DELETE操作之后再进行一次INSERT操作，加锁操作就需要按照DELETE和INSERT的规则进行了。</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>INSERT：一般情况下，新插入一条记录受隐式锁保护，不需要在内存中为其生成对应的锁结构。</p>
+</blockquote>
+<h3 id="InnoDb的行级锁"><a href="#InnoDb的行级锁" class="headerlink" title="InnoDb的行级锁"></a>InnoDb的行级锁</h3><p><strong>1、Record Lock</strong> ：记录锁，官方命名：LOCK_REC_NOT_GAP,这种记录锁有S型和X型之分。<br><strong>2、Gap Lock</strong> ：在Repeatable read隔离级别下可以很大程度上解决幻读现象，解决方案有2种：1、使用MVCC方案解决；2、使用加锁方案解决。</p>
+<blockquote>
+<p>但是使用加锁方案解决时有个大问题，就是事务在第一次执行读取操作时，那些幻影记录尚不存在，无法给这些记录加上记录锁。所以InnoDB提出了Gap Lock锁。</p>
+</blockquote>
+<p><strong>间隙锁是指锁住一个索引记录的前间隙，而不是锁住具体的索引记录。间隙锁的目的是防止其他事务在该间隙内插入新的记录，从而避免幻读现象。</strong></p>
+<p>gap锁的提出仅仅是为了防止插入幻影记录而提出的。</p>
+<p><strong>对于最后一条记录之后的间隙</strong> 给那条记录加gap锁才能阻止其他事物在（8，+∞）插入新的记录呢？为了阻止其他事物在（8，+∞）区间插入记录，可以给最后一条记录所在的页面的supremum记录加上一个gap锁。</p>
+<p><strong>3、Next-Key Lock</strong> ：既想锁住某条记录，又想阻止其他事务在该记录前面的间隙加入新的记录。本质就是一个Record锁+gap锁组合体。</p>
+<blockquote>
+<p>Insert Intention Lock，一个事务在插入一条记录时，需要判断插入位置是否已经被别的事物加入了gap锁。如果有，插入操作需要等待，直到拥有gap锁的那个事务提交为止。事务在等待时也需要在内存中生成一个锁接口，表明有事务想在某个间隙插入新记录，但是现在处于等待状态。这种类型的锁为Insert Intention Lock，也被称为插入意向锁。</p>
+</blockquote>
+<h3 id="锁定读的语句"><a href="#锁定读的语句" class="headerlink" title="锁定读的语句"></a>锁定读的语句</h3><blockquote>
+<p>1、语句1:select …… LOCK IN SHARE MODE;<br>2、语句2:select …… for update;<br>3、语句3:update ……<br>4、语句4:delete ……</p>
+</blockquote>
+<p>语句1和语句2是mysql中规定的2中锁定读的语法格式，而语句3和语句4由于在执行过程中需要首先定位到被改动的记录并给记录加锁，也可以认为一种锁定读。</p>
+<p><strong>匹配模式</strong>：执行查询时，查询优化器会生成若干个扫描区间。在扫描区间内快速定位到第一条记录。然后沿着这条记录所在的单项链表可以访问到其他数据。<br><strong>唯一性搜索</strong>：如果在扫描某个扫描区间的记录前，就能事先确定该扫描区间内最多只包含一条记录的话，那么就把这种情况称为唯一性搜索。</p>
 
                 
             </div>
@@ -448,7 +476,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://MuchJoy.github.io/2024/07/13/Mysql%E2%80%94Explain/">https://MuchJoy.github.io/2024/07/13/Mysql%E2%80%94Explain/</a>
+                    <a href="https://MuchJoy.github.io/2024/07/22/Mysql%E2%80%94%E4%BA%8B%E5%8A%A1/">https://MuchJoy.github.io/2024/07/22/Mysql%E2%80%94%E4%BA%8B%E5%8A%A1/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -566,9 +594,10 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
                 <a href="/2024/07/22/Mysql%E2%80%94%E4%BA%8B%E5%8A%A1/">
                     <div class="card-image">
@@ -586,9 +615,9 @@
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2024-07-22
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-07-22
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -601,6 +630,7 @@
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
@@ -619,31 +649,31 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2024/07/11/Mybatis%E8%AF%A6%E8%A7%A3%E5%9B%9B/">
+                <a href="/2024/07/13/Mysql%E2%80%94Explain/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="Mybatis详解四">
+                        <img src="/medias/featureimages/3.jpg" class="responsive-img" alt="Mysql—Explain">
                         
-                        <span class="card-title">Mybatis详解四</span>
+                        <span class="card-title">Mysql—Explain</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            本章赘述mybatis的动态sql，插件，以及一二级缓存。
+                            本章主要是记录一下EXPLAIN相关的内容以及InnoDB的Buffer Pool(缓冲池)。
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-07-11
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-07-13
                             </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/%E6%A1%86%E6%9E%B6%EF%BD%9C%E4%B8%AD%E9%97%B4%E4%BB%B6/" class="post-category">
-                                    框架｜中间件
+                            <a href="/categories/%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/" class="post-category">
+                                    数据存储
                                 </a>
                             
                             
@@ -653,8 +683,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/mybatis/">
-                        <span class="chip bg-color">mybatis</span>
+                    <a href="/tags/mysql/">
+                        <span class="chip bg-color">mysql</span>
                     </a>
                     
                 </div>

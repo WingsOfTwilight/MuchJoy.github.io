@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>java基础</title>
+      <link href="/2024/08/08/java%E5%9F%BA%E7%A1%80/"/>
+      <url>/2024/08/08/java%E5%9F%BA%E7%A1%80/</url>
+      
+        <content type="html"><![CDATA[<h2 id="知识体系"><a href="#知识体系" class="headerlink" title="知识体系"></a>知识体系</h2><p><img src="/../images/java%E5%9F%BA%E7%A1%80.png"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> java </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> java </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Mysql—redo日志&amp;undo日志</title>
       <link href="/2024/07/22/Mysql%E2%80%94redo%E6%97%A5%E5%BF%97-undo%E6%97%A5%E5%BF%97/"/>
       <url>/2024/07/22/Mysql%E2%80%94redo%E6%97%A5%E5%BF%97-undo%E6%97%A5%E5%BF%97/</url>

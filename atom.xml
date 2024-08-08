@@ -6,7 +6,7 @@
   <link href="https://muchjoy.github.io/atom.xml" rel="self"/>
   
   <link href="https://muchjoy.github.io/"/>
-  <updated>2024-07-22T14:25:26.043Z</updated>
+  <updated>2024-08-08T13:24:38.778Z</updated>
   <id>https://muchjoy.github.io/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>java基础</title>
+    <link href="https://muchjoy.github.io/2024/08/08/java%E5%9F%BA%E7%A1%80/"/>
+    <id>https://muchjoy.github.io/2024/08/08/java%E5%9F%BA%E7%A1%80/</id>
+    <published>2024-08-08T13:22:35.000Z</published>
+    <updated>2024-08-08T13:24:38.778Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="知识体系"><a href="#知识体系" class="headerlink" title="知识体系"></a>知识体系</h2><p><img src="/../images/java%E5%9F%BA%E7%A1%80.png"></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h2 id=&quot;知识体系&quot;&gt;&lt;a href=&quot;#知识体系&quot; class=&quot;headerlink&quot; title=&quot;知识体系&quot;&gt;&lt;/a&gt;知识体系&lt;/h2&gt;&lt;p&gt;&lt;img src=&quot;/../images/java%E5%9F%BA%E7%A1%80.png&quot;&gt;&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    <category term="java" scheme="https://muchjoy.github.io/categories/java/"/>
+    
+    
+    <category term="java" scheme="https://muchjoy.github.io/tags/java/"/>
+    
+  </entry>
   
   <entry>
     <title>Mysql—redo日志&amp;undo日志</title>
